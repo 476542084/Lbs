@@ -3,6 +3,10 @@
   <div class="home">
     <div class="user">
       <img src="@/assets/user.png" alt="">
+      <i class="mint-toast-icon mintui mintui-search"></i>
+    </div>
+    <div class="user">
+      <img src="@/assets/user.png" alt="">
     </div>
     <div id="container" style="width:100%;height:600px">
     </div>
@@ -73,5 +77,12 @@ export default {
 }
 .amap-copyright{
   display: none !important;
+}
+.user{
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+  z-index: 999;
 }
 </style>
