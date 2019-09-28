@@ -24,9 +24,9 @@ module.exports = {
     },
     // 它支持webPack-dev-server的所有选项
     devServer: {
-        host: "192.168.3.51",
+        host: "192.168.1.4",
         port: 8080, // 端口号
-        https: false, // https:{type:Boolean}
+        https: true, // https:{type:Boolean}
         open: false, //配置自动启动浏览器
         // proxy: 'http://localhost:4000' // 配置跨域处理,只有一个代理
 
