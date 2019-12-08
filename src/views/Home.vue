@@ -31,7 +31,13 @@ export default {
       isGeolocation:false,
       myLng:100,
       myLat:22,
-      titleIndex:0
+      titleIndex:0,
+      lnglats:[
+          [113.9010,22.56200],
+          [113.9020,22.56300],
+          [113.9030,22.56200],
+          [113.9048,22.56500],
+        ]
     }
   },
   created() {
@@ -39,20 +45,24 @@ export default {
   },
   mounted () {
 
-    this.map = new AMap.Map('container', {
+      this.map = new AMap.Map('container', {
         resizeEnable: true,
         zoom: 16
       })  
 
-     //缩放
-     this.map.addControl(new AMap.ToolBar({
-            // 简易缩放模式，默认为 false
-            liteStyle: true
-          }));
+      //缩放
+      this.map.addControl(new AMap.ToolBar({
+        // 简易缩放模式，默认为 false
+        liteStyle: true
+      }));
 
 
     this.init()
     document.querySelector('#container').style.height = (document.documentElement.clientHeight || document.body.clientHeight) + 'px'
+
+    this.lnglats.map((item,index) => {
+      this.addMarker(item)
+    })
     
   },
   methods:{
@@ -73,7 +83,7 @@ export default {
       }
 
       //按钮
-      AMap.plugin(["AMap.Geolocation", 'AMap.ToolBar'], function() {
+      AMap.plugin(["AMap.Geolocation", 'AMap.ToolBar'], function() {  
           //定位
           var geolocation = new AMap.Geolocation(options);
           that.map.addControl(geolocation);
@@ -104,8 +114,9 @@ export default {
 
     },
 // 实例化点标记 
-    addMarker() {
+    addMarker(item = []) {
       let that = this;
+      let data = {userid:'001',like:false,extend:false}
       // that.map.clearMap();
         //创建icon
         var icon = new AMap.Icon({
@@ -114,43 +125,38 @@ export default {
               imageSize: new AMap.Size(40, 40) 
         });
 
-        //实例化信息窗体
+        //实例化信息窗体  
         let title = '方恒假日酒店<span style="font-size:11px;color:#F00;">价格:318</span>',
             content = [];
-        content.push("<img src='https://upload.jianshu.io/users/upload_avatars/1758676/fa0d96a7c0c6.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/180/h/180'>地址：北京市朝阳区阜通东大街6号院3号楼东北8.3公里");
-        content.push("电话：010-64733333");
-        content.push("<a href='https://ditu.amap.com/detail/B000A8URXB?citycode=110105'>详细信息</a>");
-        let infoWindow = new AMap.InfoWindow({
-            isCustom: true,  //使用自定义窗体
-            content: that.createInfoWindow(title, content.join("<br/>")),
-            offset: new AMap.Pixel(16, -45)
-        });
+        content.push("具体内容具体内容具体内容具体内容具体内容具体内容具体内容具体内容");
+        // content.push("电话：010-64733333"); 
+        // content.push("<div><button></div>");
+       
 
 
         let marker = new AMap.Marker({
             icon: icon,
-            position: that.map.getCenter(),
+            position: item.length == 0 ? that.map.getCenter() : item,
             map:that.map,
             offset: new AMap.Pixel(-26, -55),
         });
 
-
-          //标记点击事件
-          // marker.off('click', this.showInfoM());
-        // marker.setMap(this.map);
-        // marker.on('click', function(e){alert('e',e);console.log('e',e)});
-
-        // console.log('sdsd0',this.map.getCenter())
-
         //鼠标点击marker弹出自定义的信息窗体
-    AMap.event.addListener(marker, 'click', function () {
-        infoWindow.open(that.map, marker.getPosition());
-    });
+        AMap.event.addListener(marker, 'click', function () {
+           let infoWindow = new AMap.InfoWindow({
+            isCustom: true,  //使用自定义窗体
+            content: that.createInfoWindow(title, content.join("<br/>"),data),
+            offset: new AMap.Pixel(16, -45)
+        });
+        
+            infoWindow.open(that.map, marker.getPosition());
+        });
 
 
     },
     //构建自定义信息窗体
-    createInfoWindow(title, content) {
+    createInfoWindow(title, content,data) {
+      console.log('dfffffffff')
         var info = document.createElement("div");
         info.className = "custom-info input-card content-window-card";
 
@@ -176,6 +182,24 @@ export default {
         middle.innerHTML = content;
         info.appendChild(middle);
 
+        // 定义状态
+        var flag = document.createElement("div");
+        flag.className = "info-button";
+        flag.style.backgroundColor = 'white';
+        let leftFlag = document.createElement('button');
+        leftFlag.className = 'info-button-left'
+        leftFlag.innerHTML ='左边哈哈'
+        leftFlag.onclick = this.handleLike
+
+        let rightFlag = document.createElement('button');
+        rightFlag.className = 'info-button-right'
+        rightFlag.innerHTML='右边边哈哈'
+        rightFlag.onclick = this.handleExtend
+
+        flag.appendChild(leftFlag)
+        flag.appendChild(rightFlag)
+        info.appendChild(flag);
+
         // 定义底部内容
         var bottom = document.createElement("div");
         bottom.className = "info-bottom";
@@ -189,11 +213,18 @@ export default {
         return info;
     },
 
-  //关闭信息窗体
-  closeInfoWindow() {
-      this.map.clearInfoWindow();
-  },
-
+    //关闭信息窗体
+    closeInfoWindow() {
+        this.map.clearInfoWindow();
+    },
+    //关注
+    handleLike() {
+      alert('关注')
+    },
+    //推广
+    handleExtend() {
+      alert('推广')
+    },
     showInfoM(e){
       console.log('e',e)
       // alert(e);
