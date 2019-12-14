@@ -21,7 +21,9 @@
 <script>
 
 import AMap from 'AMap';
-
+import {register,login} from '@/api/getData'
+import ParamidaPay from '@/api/paramidaPay';
+import { async } from 'q';
 export default {
   name: 'home',
   components: {},
@@ -66,6 +68,30 @@ export default {
     
   },
   methods:{
+    register: async() => {
+      try {
+        let res = await register('test','123456','testDD')
+        if(res.status === 200){
+          console.log('ddd')
+        }else{
+           console.log('error',res.msg)
+        }
+      } catch (error) {
+        console.log('error',error)
+      }
+    },
+     login: async() => {
+      try {
+        let res = await login('testDD','123456')
+        if(res.status === 200){
+          console.log('ddd')
+        }else{
+           console.log('error',res.msg)
+        }
+      } catch (error) {
+        console.log('error',error)
+      }
+    },
     init () {
       let that = this;
 
@@ -131,9 +157,13 @@ export default {
         content.push("具体内容具体内容具体内容具体内容具体内容具体内容具体内容具体内容");
         // content.push("电话：010-64733333"); 
         // content.push("<div><button></div>");
-       
-
-
+       if(item.length == 0){
+        let {lat,lng} = that.map.getCenter()
+        console.log('lat', lat)
+        console.log('lng', lng)
+        this.register()
+       }
+        
         let marker = new AMap.Marker({
             icon: icon,
             position: item.length == 0 ? that.map.getCenter() : item,
@@ -231,6 +261,7 @@ export default {
     },
     getMypostion(){
       alert(`lat:${this.myLat},lng:${this.myLng}`)
+      this.login()
     },
     postPostion(){
 

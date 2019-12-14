@@ -1,5 +1,9 @@
+const path = require("path");
+function resolve(dir) {
+    return path.join(__dirname, dir);
+}
 module.exports = {
-    baseUrl: '/',
+    publicPath: '/',
     outputDir: 'dist', //打包输出目录默认dist
 
     //默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。你可以通过将这个选项设为 false 来关闭文件名哈希。(false的时候就是让原来的文件名不改变)
@@ -22,24 +26,28 @@ module.exports = {
         }
 
     },
+    chainWebpack: config => {
+        config.resolve.alias
+            .set("@", resolve("src"))
+            // .set("utils", resolve("src/utils"));
+    },
     // 它支持webPack-dev-server的所有选项
     devServer: {
-        host: "192.168.1.4",
+        host: "192.168.1.3",
         port: 8080, // 端口号
         https: true, // https:{type:Boolean}
         open: false, //配置自动启动浏览器
-        // proxy: 'http://localhost:4000' // 配置跨域处理,只有一个代理
-
-        // 配置多个代理
+        // proxy: 'http://47.102.134.4:1111/' // 配置跨域处理,只有一个代理
         proxy: {
             "/api": {
-                target: "<url>",
-                ws: true,
-                changeOrigin: true
+                target: "http://47.102.134.4:1111",
+                ws:false,
+                secure: false,
+                changeOrigin: true,
+                pathRewrite:{
+                    '^/api':''
+                }
             },
-            "/foo": {
-                target: "<other_url>"
-            }
         }
     }
 }
