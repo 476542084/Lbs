@@ -43,9 +43,8 @@
 <script>
 
 import AMap from 'AMap';
-import {getMobileHome,publicMessage,getMarkDetail,} from '@/api/getData'
+import {getMobileHome,publicMessage,getMarkDetail} from '@/api/getData'
 import {showError,showSuccess} from '@/utils/common'
-import ParamidaPay from '@/api/paramidaPay';
 import LbsNav from '@/components/nav'
 import { Cell,Indicator,MessageBox,Popup,Field} from 'mint-ui';
 import { async } from 'q';
@@ -54,6 +53,7 @@ export default {
   components: {LbsNav},
   data(){
     return{
+      infoWindow:'',
       title:'',
       content:'',
       popupVisible:false,
@@ -78,7 +78,7 @@ export default {
   mounted () {
       this.map = new AMap.Map('container', {
         resizeEnable: true,
-        zoom: 16
+        zoom: 8
       })  
       //缩放
       this.map.addControl(new AMap.ToolBar({
@@ -117,6 +117,9 @@ export default {
                 this.addMarker(data,resItem)
                 data.length = 0
               })
+        //       var zoom = this.map.getZoom();
+				// this.map.setZoom(zoom - 9); 	
+              // this.map.setFitView(null,true,[10,10,10,10],3)
             }
             // this.lnglats.map((item,index) => {
             //   this.addMarker(item)
@@ -128,8 +131,32 @@ export default {
           showError('网络错误，请稍后重试！')
         }
     },
+    //标注完获取标注信息
+    async handleGetMobileHomeForMark(){
+        try {
+          let res = await getMobileHome()
+          if(res.status === 200){
+            let userId = this.$store.state.userInfo.userId
+            let data = {}
+            if(res.result.length > 0){
+              res.result.map((item,index) => {
+                  if(item.userId === userId){
+                    data = item
+                  }
+              })
+              this.addMarker([],data)  
+            }
+
+          }else{
+            showError(res.msg||res.error)
+          }
+        } catch (error) {
+          showError('网络错误，请稍后重试！')
+        }
+    },
     //添加标注点
     handleAddMarker(){
+      // this.addMarker()
       MessageBox.confirm('确定标注该位置吗？').then(action => {
             if(action == 'confirm'){
                 console.log('ddddd')
@@ -146,6 +173,7 @@ export default {
       let {P,O} = this.map.getCenter()
       data.push(P)
       data.push(O)
+      console.log('data',data)
       return data
     },
     async actionAddMarker(){
@@ -154,17 +182,17 @@ export default {
           showError('请填写完整！')
           return
         }
-        
         let {P,O} = this.map.getCenter()
         // P:纬度lat
         // O:经度lng
         Indicator.open();
         try {
-          let res = await publicMessage('测试内容测试内容测试内容',P,O,'测试标题1')
+          let res = await publicMessage(this.content.trim(),P,O,this.title.trim())
           if(res.status === 200){
             showSuccess('标注成功！')
             this.popupVisible = false
-            this.addMarker()
+            this.handleGetMobileHomeForMark()
+            
           }else{
             showError(res.msg||res.error)
           }
@@ -172,6 +200,30 @@ export default {
           showError('网络错误，请稍后重试！')
         }
 
+    },
+    async handleGetMarkDetail(e){
+      let that = this
+        Indicator.open();
+        try {
+          let res = await getMarkDetail(e.target.markId)
+          if(res.status === 200){
+            showSuccess('')
+            let title = res.markDetail.title,
+            content = [];
+            content.push(res.markDetail.content);
+
+            var infoWindow = new AMap.InfoWindow({ 
+              isCustom: true,  //使用自定义窗体
+              content: that.initInfoWindow(title, content.join("<br/>"),res.markDetail),
+              offset: new AMap.Pixel(16, -45)
+            });
+            infoWindow.open(this.map, e.target.getPosition());
+          }else{
+            showError(res.msg||res.error)
+          }
+        } catch (error) {
+          showError('网络错误，请稍后重试！')
+        }
     },
     init () {
       let that = this;
@@ -228,39 +280,64 @@ export default {
         var icon = new AMap.Icon({
               size: new AMap.Size(40, 40),
               image: data.headImage == null ? 'https://upload.jianshu.io/users/upload_avatars/1758676/fa0d96a7c0c6.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/180/h/180' : data.headImage,
+              // image: 'https://upload.jianshu.io/users/upload_avatars/1758676/fa0d96a7c0c6.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/180/h/180',
               imageSize: new AMap.Size(40, 40) 
         });
 
         //实例化信息窗体  
-        let title = '方恒假日酒店<span style="font-size:11px;color:#F00;">价格:318</span>',
+        let title = 'title',
             content = [];
-        content.push("具体内容具体内容具体内容具体内容具体内容具体内容具体内容具体内容");
+        content.push("contentcontentcontentcontent");
         // content.push("电话：010-64733333"); 
         // content.push("<div><button></div>");
 
         let marker = new AMap.Marker({
             icon: icon,
-            position: item.length == 0 ? that.returnGetCenter() : item,
+            // position: item.length == 0 ? that.returnGetCenter() : item,
+            position: item.length == 0 ? that.map.getCenter() : item,
             map:that.map,
             offset: new AMap.Pixel(-26, -55),
         });
-
+        // console.log('create',that.createInfoWindow(title, content.join("<br/>"),data))
         //鼠标点击marker弹出自定义的信息窗体
-        AMap.event.addListener(marker, 'click', function () {
-           let infoWindow = new AMap.InfoWindow({
-            isCustom: true,  //使用自定义窗体
-            content: that.createInfoWindow(title, content.join("<br/>"),data),
-            offset: new AMap.Pixel(16, -45)
-        });
-            infoWindow.open(that.map, marker.getPosition());
-        });
+        marker.markId = data.markId
+        marker.on('click',this.mclick);
+
+        // AMap.event.addListener(marker, 'click', function () {
+        //    let infoWindow = new AMap.InfoWindow({
+        //     isCustom: true,  //使用自定义窗体
+        //     content: that.initInfoWindow(title, content.join("<br/>"),data),
+        //     offset: new AMap.Pixel(16, -45)
+        // });
+        //     infoWindow.open(that.map, marker.getPosition());
+        // });
 
 
     },
+    mclick(e){
+      console.log('e',e)
+      this.handleGetMarkDetail(e)
+    },
     //构建自定义信息窗体
-    createInfoWindow(title, content,data) {
-        console.log('data',data)
-        // this.handleGetMarkDetail()
+    async createInfoWindow(title, content,data) {
+        // console.log('data',data)
+        // console.log('content',content)
+        // let that = this;
+        // this.handleGetMarkDetail(data,title,content)
+         
+        // console.log('test',test)
+        // console.log('handleGetMarkDetail',this.handleGetMarkDetail(data,title,content).then((test)=>{console.log('test',test)}))
+
+
+       
+    },
+
+    initInfoWindow(title,content,data){
+
+      //  let test = await this.handleGetMarkDetail(data,title,content)
+      //   console.log('test',test)
+
+      //   console.log('data',data)
         var info = document.createElement("div");
         info.className = "custom-info input-card content-window-card";
 
@@ -314,9 +391,9 @@ export default {
         sharp.src = "https://webapi.amap.com/images/sharp.png";
         bottom.appendChild(sharp);
         info.appendChild(bottom);
+        console.log('info',info)
         return info;
     },
-
     //关闭信息窗体
     closeInfoWindow() {
         this.map.clearInfoWindow();
