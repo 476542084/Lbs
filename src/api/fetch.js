@@ -1,5 +1,5 @@
 // import {baseUrl} from './envConfig'
-// import store from '@/store/store'
+import store from '@/store'
 // 将字符串转为url格式编码
 function formUrlencode(d){
 	let data = ""
@@ -8,7 +8,13 @@ function formUrlencode(d){
 	}
 	return data.substr(1)
 }
-
+function uploadFile(d){
+	let data = new FormData()
+	for(let key in d) {
+		data.append(key,d[key])
+	}
+	return data
+}
 export default async(url = '', data = {}, type = 'GET', upload = false, method = 'fetch') => {
 	type = type.toUpperCase();
 	// url = baseUrl + url;
@@ -26,14 +32,13 @@ export default async(url = '', data = {}, type = 'GET', upload = false, method =
 	}
 
 	if (window.fetch && method === 'fetch') {
-		console.log('data',data)
 		let requestConfig = {
 			credentials: 'include',
 			method: type,
 			headers: {
 				'Accept': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded',
-                // 'Authorization':'JWT '+ store.getState('forum').forumData.token
+                'token': store.state.token || ''
 			},
 			mode: "cors",
 			cache: "no-cache"
@@ -41,32 +46,30 @@ export default async(url = '', data = {}, type = 'GET', upload = false, method =
 
 		if (type === 'POST' || type === 'PUT') {
             if (!upload) {
-				console.log('data22',data)
                 // Object.defineProperty(requestConfig, 'body', {
                 //     value: JSON.stringify(data)
 				// })
 				requestConfig.body = formUrlencode(data)
             } else {
-				
                 requestConfig = {
                     ...requestConfig,
                     headers: {
                         'Accept': 'application/json',
-                        // 'Authorization':'JWT '+ store.getState('forum').forumData.token,
+                        'token': store.state.token || ''
                     },
-                    body: data,
+                    body: uploadFile(data),
                 }
             }
         }
 		
 		try {
+			console.log('requestConfig',requestConfig)
             const response = await fetch(url, requestConfig)
             const responseJson = await response.json()
             // responseJson['status'] = parseInt(response.status)
             return responseJson
 		} catch (error) {
             //未知错误
-            alert('系统错误，请稍后重试')
 			throw new Error(error)
 		}
 	} else {

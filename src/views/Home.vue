@@ -1,34 +1,64 @@
 <!-- home -->
 <template>
-  <div class="home">
-    <div class="user">
-      <img src="@/assets/user.png" alt="">
-      <!-- <i class="mint-toast-icon mintui mintui-search"></i> -->
+  <div>
+    <!-- <div>
+        <mt-header fixed title="基于lbs社交"></mt-header>
+    </div> -->
+    <div class="home">
+      <div class="user">
+        <img class="index-headImg" :src=userPic alt="头像">
+      </div>
+      <div class="user">
+        <!-- <img src="@/assets/user.png" alt=""> -->
+        <!-- <button @click="getMypostion()">获取当前经纬度</button> -->
+      </div>
+      <div class="center-icon">
+        <img src="@/assets/position.png" alt="坐标">
+      </div>
+      <div class="add-icon">
+        <img  @click="handleAddMarker"  src='@/assets/addAction.png' alt="添加">
+      </div>
+      <mt-popup
+          v-model="popupVisible"
+          :closeOnClickModal=false
+          popup-transition="popup-fade">
+          <div>
+            <mt-field label="标题" placeholder="请输入标题" v-model="title"></mt-field>
+            <mt-field label="详细内容" placeholder="请输入详细内容" type="textarea" rows="6" v-model="content"></mt-field>
+            <div class="popup-button">
+              <mt-button  type="primary" @click.native="actionAddMarker">确定</mt-button>
+              <mt-button  plain @click.native="handleCancel">取消</mt-button>
+            </div>
+
+          </div>
+        </mt-popup>
+      <div id="container" style="width:100%;height:600px">
+      </div>
+       
     </div>
-    <div class="user">
-      <!-- <img src="@/assets/user.png" alt=""> -->
-      <button @click="getMypostion()">获取当前经纬度</button>
-      <button @click="addMarker()">定位</button>
-    </div>
-    <div class="center-icon">
-      <img src="@/assets/position.png" alt="">
-    </div>
-    <div id="container" style="width:100%;height:600px">
-    </div>
+   <LbsNav propSelected="home"></LbsNav>
   </div>
 </template>
 
 <script>
 
 import AMap from 'AMap';
-import {register,login} from '@/api/getData'
+import {getMobileHome,publicMessage,getMarkDetail,} from '@/api/getData'
+import {showError,showSuccess} from '@/utils/common'
 import ParamidaPay from '@/api/paramidaPay';
+import LbsNav from '@/components/nav'
+import { Cell,Indicator,MessageBox,Popup,Field} from 'mint-ui';
 import { async } from 'q';
 export default {
   name: 'home',
-  components: {},
+  components: {LbsNav},
   data(){
     return{
+      title:'',
+      content:'',
+      popupVisible:false,
+      userPic: require('@/assets/defaultPic.png'),
+      token:this.$store.state.token,
       map: null,
       isGeolocation:false,
       myLng:100,
@@ -46,12 +76,10 @@ export default {
    
   },
   mounted () {
-
       this.map = new AMap.Map('container', {
         resizeEnable: true,
         zoom: 16
       })  
-
       //缩放
       this.map.addControl(new AMap.ToolBar({
         // 简易缩放模式，默认为 false
@@ -62,35 +90,88 @@ export default {
     this.init()
     document.querySelector('#container').style.height = (document.documentElement.clientHeight || document.body.clientHeight) + 'px'
 
-    this.lnglats.map((item,index) => {
-      this.addMarker(item)
-    })
+    //获取所有标注信息
+    if(this.$store.state.token !== ''){
+          this.handleGetMobileHome()
+    }
+
+    console.log('this.$store',this.$store)
+    //获取头像
+    if(this.$store.state.userInfo.headImage && this.$store.state.userInfo.headImage !== null){
+      this.userPic = this.$store.state.userInfo.headImage
+    }
     
   },
   methods:{
-    register: async() => {
-      try {
-        let res = await register('test','123456','testDD')
-        if(res.status === 200){
-          console.log('ddd')
-        }else{
-           console.log('error',res.msg)
+    async handleGetMobileHome(){
+        Indicator.open();
+        try {
+          let res = await getMobileHome()
+          if(res.status === 200){
+            showSuccess('')
+            if(res.result.length > 0){
+              let data = []
+              res.result.map((resItem) => {
+                data.push(resItem.lng)
+                data.push(resItem.lat)
+                this.addMarker(data,resItem)
+                data.length = 0
+              })
+            }
+            // this.lnglats.map((item,index) => {
+            //   this.addMarker(item)
+            // })
+          }else{
+            showError(res.msg||res.error)
+          }
+        } catch (error) {
+          showError('网络错误，请稍后重试！')
         }
-      } catch (error) {
-        console.log('error',error)
-      }
     },
-     login: async() => {
-      try {
-        let res = await login('testDD','123456')
-        if(res.status === 200){
-          console.log('ddd')
-        }else{
-           console.log('error',res.msg)
+    //添加标注点
+    handleAddMarker(){
+      MessageBox.confirm('确定标注该位置吗？').then(action => {
+            if(action == 'confirm'){
+                console.log('ddddd')
+                this.popupVisible = true
+                // this.actionAddMarker()
+            }
+        });
+    },
+    handleCancel(){
+      this.popupVisible = false
+    },
+    returnGetCenter(){
+      let data = []
+      let {P,O} = this.map.getCenter()
+      data.push(P)
+      data.push(O)
+      return data
+    },
+    async actionAddMarker(){
+        if(this.title.trim() == '' || this.content.trim() == ''){
+          console.log('error')
+          showError('请填写完整！')
+          return
         }
-      } catch (error) {
-        console.log('error',error)
-      }
+        
+        let {P,O} = this.map.getCenter()
+        // P:纬度lat
+        // O:经度lng
+        Indicator.open();
+        try {
+          let res = await publicMessage('测试内容测试内容测试内容',P,O,'测试标题1')
+          if(res.status === 200){
+            showSuccess('标注成功！')
+            this.popupVisible = false
+            this.addMarker()
+          }else{
+            showError(res.msg||res.error)
+          }
+        } catch (error) {
+          showError('网络错误，请稍后重试！')
+        }
+
     },
     init () {
       let that = this;
@@ -140,14 +221,13 @@ export default {
 
     },
 // 实例化点标记 
-    addMarker(item = []) {
+    addMarker(item = [],data = {headImage:null}) {
       let that = this;
-      let data = {userid:'001',like:false,extend:false}
       // that.map.clearMap();
         //创建icon
         var icon = new AMap.Icon({
               size: new AMap.Size(40, 40),
-              image: 'https://upload.jianshu.io/users/upload_avatars/1758676/fa0d96a7c0c6.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/180/h/180',
+              image: data.headImage == null ? 'https://upload.jianshu.io/users/upload_avatars/1758676/fa0d96a7c0c6.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/180/h/180' : data.headImage,
               imageSize: new AMap.Size(40, 40) 
         });
 
@@ -157,16 +237,10 @@ export default {
         content.push("具体内容具体内容具体内容具体内容具体内容具体内容具体内容具体内容");
         // content.push("电话：010-64733333"); 
         // content.push("<div><button></div>");
-       if(item.length == 0){
-        let {lat,lng} = that.map.getCenter()
-        console.log('lat', lat)
-        console.log('lng', lng)
-        this.register()
-       }
-        
+
         let marker = new AMap.Marker({
             icon: icon,
-            position: item.length == 0 ? that.map.getCenter() : item,
+            position: item.length == 0 ? that.returnGetCenter() : item,
             map:that.map,
             offset: new AMap.Pixel(-26, -55),
         });
@@ -178,7 +252,6 @@ export default {
             content: that.createInfoWindow(title, content.join("<br/>"),data),
             offset: new AMap.Pixel(16, -45)
         });
-        
             infoWindow.open(that.map, marker.getPosition());
         });
 
@@ -186,7 +259,8 @@ export default {
     },
     //构建自定义信息窗体
     createInfoWindow(title, content,data) {
-      console.log('dfffffffff')
+        console.log('data',data)
+        // this.handleGetMarkDetail()
         var info = document.createElement("div");
         info.className = "custom-info input-card content-window-card";
 
@@ -280,6 +354,26 @@ export default {
 </script>
 
 <style>
+.amap-geolocation-con{
+  left: 6px !important;
+    bottom: 60px !important;
+    z-index: 500 !important;
+}
+.amap-touch-toolbar .amap-zoomcontrol{
+  right: -5px !important;
+    bottom: -50px !important;
+}
+
+.popup-button{
+  display: flex;
+  width: 90%;
+  justify-content: space-between;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+.popup-button button{
+  width: 40%;
+}
    p.my-desc {
         margin: 5px 0;
         line-height: 150%;
@@ -315,12 +409,30 @@ export default {
   top: 45%;
   left: 45%;
   cursor: pointer;
-  z-index: 999;
+  z-index: 10;
 }
 .center-icon img{
   width: 40px;
 }
-
+.add-icon{
+  transform: translate(-50%, 0);
+  background-color: white;
+  position: fixed;
+  bottom: 100px;
+  cursor: pointer;
+  z-index: 10;
+  left: 50%;
+  border-radius: 50%;
+  box-shadow: 2px 3px 8px #888888;
+}
+.add-icon img{
+  width: 60px;
+}
+.index-headImg{
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+}
 html, body, #container {
               height: 100%;
               width: 100%;

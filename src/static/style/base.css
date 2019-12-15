@@ -93,3 +93,31 @@ button {
     border: none;
     background: none;
 }
+
+/* mint */
+.mint-toast{
+    z-index: 9999 !important;
+}
+.mint-header{
+    height:3rem !important;
+    font-size: 2.5rem !important;
+}
+
+.mint-cell-wrapper,.mint-cell-value{
+    font-size: 1.4rem !important;
+}
+
+.mint-popup{
+    width: 90%;
+  }
+  .mint-cell-text{
+    font-size: 1.4rem !important;
+  }
+.mytoast-warn{
+    background-color: #fef0f0 !important;
+border-color: #fde2e2 !important;
+    /* box-shadow: 2px 3px 8px #888888 !important; */
+}
+.mytoast-warn span{
+    color: #e03a3a !important;
+}
