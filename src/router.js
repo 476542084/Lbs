@@ -8,6 +8,7 @@ const About = ()=> import('./views/about.vue')
 const Login = ()=> import('./views/login.vue')
 const User = ()=> import('./views/user.vue')
 const Register = ()=> import('./views/register.vue')
+const PopularMsg = ()=> import('./views/popularMsg.vue')
 
 const router = new Router({
     //指定路由选中时的样式类名
@@ -42,11 +43,15 @@ const router = new Router({
             name:'login',
             component: Login 
         },
-        
         {
             path:'/user',
             name:'user',
             component: User 
+        },
+        {
+            path:'/popularMsg',
+            name:'popularMsg',
+            component: PopularMsg 
         }
     ]
 })

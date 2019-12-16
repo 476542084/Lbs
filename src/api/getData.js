@@ -3,15 +3,24 @@ import store from '@/store'
 const url = '/api'
 
 
-//用户接口 
+//高德地图
 
+//用户接口 
+export const getAmapAddress = (lat, lng) => fetch('/amap', {
+    // output:'xml',
+    location:`${lng},${lat}`,
+    key:'a6d2df7f27a6e3a5cc28e376062e5bf6',
+    radius:100,
+    extensions:'all',
+    batch:false,
+    roadlevel:0
+})
 
 //登录--done
 export const login = (username, password) => fetch(url + '/login', {
     username,
     password
 }, 'POST')
-
 
 //获取关注信息流
 export const getAttentionMsgList = (userId = store.state.userInfo.userId) => fetch(url + `/user/${userId}/attentionMsgList`)
@@ -23,13 +32,13 @@ export const getUserList = (userId = store.state.userInfo.userId) => fetch(url +
 //获取个人信息--done
 export const getUserMsg = (userId = store.state.userInfo.userId) => fetch(url + `/user/${userId}/userMsg`)
 
-//关注用户
+//关注用户--done
 export const attention = (followId, userId = store.state.userInfo.userId) => fetch(url + '/user/attention', {
     followId,
     userId
 }, 'POST')
 
-//取消关注用户
+//取消关注用户--done
 export const cancelAttention = (cancelId, userId = store.state.userInfo.userId) => fetch(url + '/user/cancelAttention', {
     cancelId ,
     userId
@@ -114,7 +123,7 @@ export const publicMessage = (content,lat,lng,title,userId = store.state.userInf
     userId
 }, 'POST')
 
-//发布校园推广
+//发布校园推广--done
 export const publicPopularMsg = (markId,userId = store.state.userInfo.userId) => fetch(url + '/mark/publicPopularMsg', {
     markId,
     userId

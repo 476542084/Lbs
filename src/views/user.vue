@@ -1,4 +1,4 @@
-<!-- home -->
+<!-- user -->
 <template>
     <div class="user-container">
         <div class="user-user">

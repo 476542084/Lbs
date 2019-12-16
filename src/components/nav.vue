@@ -1,12 +1,16 @@
 <template>
     <mt-tabbar v-model="selected">
-        <mt-tab-item id="home" @click="handleRouter()">
-            <img slot="icon" src="@/assets/index.png">
-            主页
-        </mt-tab-item>
-        <mt-tab-item id="popular"  @click="handleRouter()">
+        <mt-tab-item id="popularMsg">
             <img slot="icon" src="@/assets/popularIndex.png">
             推广
+        </mt-tab-item>
+        <mt-tab-item id="experience">
+            <img slot="icon" src="@/assets/experienceIndex.png">
+            心得
+        </mt-tab-item>
+        <mt-tab-item id="home">
+            <img slot="icon" src="@/assets/index.png">
+            主页
         </mt-tab-item>
         <mt-tab-item id="attenttion">
             <img slot="icon" src="@/assets/attentionIndex.png">
@@ -39,10 +43,9 @@ export default {
   watch:{
       selected:{
           handler(newName, oldName) {
-      　　// ...
-       this.$router.push({path: `/${newName}`});
-      console.log('newName',newName)
-      console.log('oldName',oldName)
+            this.$router.push({path: `/${newName}`});
+            console.log('newName',newName)
+            console.log('oldName',oldName)
     　　    },
     // 　　immediate: true
       }

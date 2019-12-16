@@ -48,6 +48,15 @@ module.exports = {
                     '^/api':''
                 }
             },
+            "/amap": {
+                target: "https://restapi.amap.com/v3/geocode/regeo",
+                ws:false,
+                secure: true,
+                changeOrigin: true,
+                pathRewrite:{
+                    '^/ampa':''
+                }
+            },
         }
     }
 }

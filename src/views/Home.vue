@@ -277,6 +277,7 @@ export default {
     },
     mclick(e){
       this.e = e
+      console.log('ee',e)
       this.handleGetMarkDetail(e)
     },
 
@@ -552,7 +553,8 @@ html, body, #container {
           justify-content: space-between;
         }
         div.info-button button{
-          padding: 10px 20px;
+          font-size: 16px;
+          padding: 6px 15px;
           color: #fff;
           background-color: #409eff;
           border-color: #409eff;

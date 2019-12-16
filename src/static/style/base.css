@@ -95,6 +95,10 @@ button {
 }
 
 /* mint */
+.mint-tabbar {
+    position: fixed !important;
+    z-index: 9999999 !important;
+}
 .amap-icon img{
     border-radius: 50%;
 }
