@@ -16,6 +16,7 @@ export const login = (username, password) => fetch(url + '/login', {
 //获取关注信息流
 export const getAttentionMsgList = (userId = store.state.userInfo.userId) => fetch(url + `/user/${userId}/attentionMsgList`)
 
+//管理员
 //查看所有用户信息
 export const getUserList = (userId = store.state.userInfo.userId) => fetch(url + `/user/${userId}/userList`)
 
@@ -29,11 +30,12 @@ export const attention = (followId, userId = store.state.userInfo.userId) => fet
 }, 'POST')
 
 //取消关注用户
-export const cancelAttention = (followId, userId = store.state.userInfo.userId) => fetch(url + '/user/cancelAttention', {
-    followId,
+export const cancelAttention = (cancelId, userId = store.state.userInfo.userId) => fetch(url + '/user/cancelAttention', {
+    cancelId ,
     userId
 }, 'POST')
 
+//管理员
 //获取统计数据
 export const getCountData = (endTime, startTime,status,userId = store.state.userInfo.userId) => fetch(url + '/user/countData', {
     endTime,
@@ -42,6 +44,7 @@ export const getCountData = (endTime, startTime,status,userId = store.state.user
     userId
 }, 'POST')
 
+//管理员
 //删除操作-心得交流/标注地点
 export const deleteByType = (id, type,userId = store.state.userInfo.userId) => fetch(url + '/user/deleteByType', {
     id,
@@ -70,36 +73,39 @@ export const updateUserPic = (file, userId = store.state.userInfo.userId) => fet
 //获取推广审核状态
 export const getCheckList = (userId = store.state.userInfo.userId) => fetch(url + '/mark/checkList',{userId})
 
+//管理员
 //标注地点管理列表
 export const findMarkList = (selectedUserId, userId = store.state.userInfo.userId) => fetch(url + '/mark/findMarkList', {
     selectedUserId,
     userId
 }, 'POST')
 
-//审核功能
+//管理员
+//审核功能(通过：1，拒绝：2)
 export const markCheck = (markId, status,userId = store.state.userInfo.userId) => fetch(url + '/mark/markCheck', {
     markId,
     status,
     userId
 }, 'POST')
 
-//获取标注地点详情
+//获取标注地点详情--done
 export const getMarkDetail = (markId,userId = store.state.userInfo.userId) => fetch(url + '/mark/markDetail', {
     markId,
     userId
 }, 'POST')
 
-//获取首页
+
+//获取首页--done
 export const getMobileHome = (userId = store.state.userInfo.userId) => fetch(url + '/mark/mobileHome', {userId})
 
-
+//管理员
 //获取推广信息审核列表
 export const getPcCheckList = (userId = store.state.userInfo.userId) => fetch(url + '/mark/pcCheckList', {userId})
 
 //获取校园推广流
 export const getPopularMsg = (userId = store.state.userInfo.userId) => fetch(url + '/mark/popularMsg', {userId})
 
-//发布信息功能
+//发布信息功能--done
 export const publicMessage = (content,lat,lng,title,userId = store.state.userInfo.userId) => fetch(url + '/mark/publicMessage', {
     content,
     lat,
@@ -114,7 +120,9 @@ export const publicPopularMsg = (markId,userId = store.state.userInfo.userId) =>
     userId
 }, 'POST')
 
+
 //心得交流接口
+
 
 //获取心得交流详情
 export const getExperienceDetail = (commId,userId = store.state.userInfo.userId) => fetch(url + '/experience/experienceDetail', {
@@ -125,6 +133,7 @@ export const getExperienceDetail = (commId,userId = store.state.userInfo.userId)
 //获取心得交流首页
 export const getExperienceHome = (userId = store.state.userInfo.userId) => fetch(url + '/experience/experienceHome', {userId})
 
+//管理员
 //获取心得交流管理列表
 export const findExperienceList = (selectedUserId,userId = store.state.userInfo.userId) => fetch(url + '/experience/findExperienceList', {
     selectedUserId,
@@ -146,7 +155,7 @@ export const postExperience = (content,title,userId = store.state.userInfo.userI
     userId
 }, 'POST')
 
-//发布心得
+//回复心得
 export const replyExperience = (commId,content,userId = store.state.userInfo.userId) => fetch(url + '/experience/replyExperience', {
     commId,
     content,

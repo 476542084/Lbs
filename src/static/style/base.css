@@ -95,6 +95,9 @@ button {
 }
 
 /* mint */
+.amap-icon img{
+    border-radius: 50%;
+}
 .mint-toast{
     z-index: 9999 !important;
 }

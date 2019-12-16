@@ -43,7 +43,7 @@
 <script>
 
 import AMap from 'AMap';
-import {getMobileHome,publicMessage,getMarkDetail} from '@/api/getData'
+import {getMobileHome,publicMessage,getMarkDetail,attention,cancelAttention} from '@/api/getData'
 import {showError,showSuccess} from '@/utils/common'
 import LbsNav from '@/components/nav'
 import { Cell,Indicator,MessageBox,Popup,Field} from 'mint-ui';
@@ -315,7 +315,6 @@ export default {
 
     },
     mclick(e){
-      console.log('e',e)
       this.handleGetMarkDetail(e)
     },
     //构建自定义信息窗体
@@ -337,7 +336,7 @@ export default {
       //  let test = await this.handleGetMarkDetail(data,title,content)
       //   console.log('test',test)
 
-      //   console.log('data',data)
+        console.log('datadatadata',data)
         var info = document.createElement("div");
         info.className = "custom-info input-card content-window-card";
 
@@ -369,13 +368,13 @@ export default {
         flag.style.backgroundColor = 'white';
         let leftFlag = document.createElement('button');
         leftFlag.className = 'info-button-left'
-        leftFlag.innerHTML ='左边哈哈'
-        leftFlag.onclick = this.handleLike
+        leftFlag.innerHTML ='关注'
+        leftFlag.onclick = this.handleAttention.bind(this,data)
 
         let rightFlag = document.createElement('button');
         rightFlag.className = 'info-button-right'
         rightFlag.innerHTML='右边边哈哈'
-        rightFlag.onclick = this.handleExtend
+        rightFlag.onclick = this.handleCancelAttention.bind(this,data)
 
         flag.appendChild(leftFlag)
         flag.appendChild(rightFlag)
@@ -391,7 +390,6 @@ export default {
         sharp.src = "https://webapi.amap.com/images/sharp.png";
         bottom.appendChild(sharp);
         info.appendChild(bottom);
-        console.log('info',info)
         return info;
     },
     //关闭信息窗体
@@ -399,13 +397,44 @@ export default {
         this.map.clearInfoWindow();
     },
     //关注
-    handleLike() {
-      alert('关注')
+    async handleAttention(data) {
+        if(!data.selfStatus){
+            Indicator.open();
+            try {
+                let res = await attention(data.userId)
+                if(res.status === 200){
+                    showSuccess('关注成功！')
+                }else{
+                    showError(res.msg||res.error)
+                }
+            } catch (error) {
+            showError('网络错误，请稍后重试！')
+            }
+        }else{
+            showError('不能关注自己！')
+            return
+        }
     },
-    //推广
-    handleExtend() {
-      alert('推广')
+    //取消关注
+    async handleCancelAttention(data) {
+        if(!data.selfStatus){
+            Indicator.open();
+            try {
+                let res = await cancelAttention(data.userId)
+                if(res.status === 200){
+                    showSuccess('已取消关注!')
+                
+                }else{
+                    showError(res.msg||res.error)
+                }
+            } catch (error) {
+            showError('网络错误，请稍后重试！')
+            }
+        }else{
+            return
+        }
     },
+
     showInfoM(e){
       console.log('e',e)
       // alert(e);

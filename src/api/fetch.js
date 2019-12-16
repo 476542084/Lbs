@@ -63,7 +63,6 @@ export default async(url = '', data = {}, type = 'GET', upload = false, method =
         }
 		
 		try {
-			console.log('requestConfig',requestConfig)
             const response = await fetch(url, requestConfig)
             const responseJson = await response.json()
             // responseJson['status'] = parseInt(response.status)
