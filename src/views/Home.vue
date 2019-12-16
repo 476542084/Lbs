@@ -6,11 +6,7 @@
     </div> -->
     <div class="home">
       <div class="user">
-        <img class="index-headImg" :src=userPic alt="头像">
-      </div>
-      <div class="user">
-        <!-- <img src="@/assets/user.png" alt=""> -->
-        <!-- <button @click="getMypostion()">获取当前经纬度</button> -->
+        <!-- <img class="index-headImg" :src=userPic alt="头像"> -->
       </div>
       <div class="center-icon">
         <img src="@/assets/position.png" alt="坐标">
@@ -23,8 +19,8 @@
           :closeOnClickModal=false
           popup-transition="popup-fade">
           <div>
-            <mt-field label="标题" placeholder="请输入标题" v-model="title"></mt-field>
-            <mt-field label="详细内容" placeholder="请输入详细内容" type="textarea" rows="6" v-model="content"></mt-field>
+            <mt-field label="标题" placeholder="请输入标题" :attr="{ maxlength: 25 }" v-model="title"></mt-field>
+            <mt-field label="详细内容" placeholder="请输入详细内容" :attr="{ maxlength: 160 }" type="textarea" rows="6" v-model="content"></mt-field>
             <div class="popup-button">
               <mt-button  type="primary" @click.native="actionAddMarker">确定</mt-button>
               <mt-button  plain @click.native="handleCancel">取消</mt-button>
@@ -43,8 +39,9 @@
 <script>
 
 import AMap from 'AMap';
-import {getMobileHome,publicMessage,getMarkDetail,attention,cancelAttention} from '@/api/getData'
+import {getMobileHome,publicMessage,getMarkDetail,attention,cancelAttention,publicPopularMsg} from '@/api/getData'
 import {showError,showSuccess} from '@/utils/common'
+import moment from 'moment'
 import LbsNav from '@/components/nav'
 import { Cell,Indicator,MessageBox,Popup,Field} from 'mint-ui';
 import { async } from 'q';
@@ -53,6 +50,17 @@ export default {
   components: {LbsNav},
   data(){
     return{
+      e: null,
+      buttonType:{
+        0:{class:'button-default',text:'推广'},
+        1:{class:'button-complete',text:'已推广'},
+        2:{class:'button-reject',text:'推广被拒'},
+        3:{class:'button-wait',text:'推广审核中'},
+      },
+      localAddress: require('@/static/images/localAddress.png'),
+      defaultPic: require('@/assets/defaultPic.png'),
+      closePic: require('@/static/images/close.gif'),
+      sharpPic: require('@/static/images/sharp.png'),
       infoWindow:'',
       title:'',
       content:'',
@@ -61,15 +69,6 @@ export default {
       token:this.$store.state.token,
       map: null,
       isGeolocation:false,
-      myLng:100,
-      myLat:22,
-      titleIndex:0,
-      lnglats:[
-          [113.9010,22.56200],
-          [113.9020,22.56300],
-          [113.9030,22.56200],
-          [113.9048,22.56500],
-        ]
     }
   },
   created() {
@@ -117,13 +116,7 @@ export default {
                 this.addMarker(data,resItem)
                 data.length = 0
               })
-        //       var zoom = this.map.getZoom();
-				// this.map.setZoom(zoom - 9); 	
-              // this.map.setFitView(null,true,[10,10,10,10],3)
             }
-            // this.lnglats.map((item,index) => {
-            //   this.addMarker(item)
-            // })
           }else{
             showError(res.msg||res.error)
           }
@@ -146,7 +139,6 @@ export default {
               })
               this.addMarker([],data)  
             }
-
           }else{
             showError(res.msg||res.error)
           }
@@ -156,25 +148,14 @@ export default {
     },
     //添加标注点
     handleAddMarker(){
-      // this.addMarker()
       MessageBox.confirm('确定标注该位置吗？').then(action => {
             if(action == 'confirm'){
-                console.log('ddddd')
                 this.popupVisible = true
-                // this.actionAddMarker()
             }
         });
     },
     handleCancel(){
       this.popupVisible = false
-    },
-    returnGetCenter(){
-      let data = []
-      let {P,O} = this.map.getCenter()
-      data.push(P)
-      data.push(O)
-      console.log('data',data)
-      return data
     },
     async actionAddMarker(){
         if(this.title.trim() == '' || this.content.trim() == ''){
@@ -208,13 +189,13 @@ export default {
           let res = await getMarkDetail(e.target.markId)
           if(res.status === 200){
             showSuccess('')
-            let title = res.markDetail.title,
+            let title = `${res.markDetail.title}<span>(${res.markDetail.selfStatus ? '自己' : res.markDetail.name})</span>`,
             content = [];
             content.push(res.markDetail.content);
-
+            content.push('-' + moment(res.createTime).format("YYYY-MM-DD HH:mm"))
             var infoWindow = new AMap.InfoWindow({ 
               isCustom: true,  //使用自定义窗体
-              content: that.initInfoWindow(title, content.join("<br/>"),res.markDetail),
+              content: that.initInfoWindow(title, content.join("<br/><br/>"),res.markDetail),
               offset: new AMap.Pixel(16, -45)
             });
             infoWindow.open(this.map, e.target.getPosition());
@@ -226,8 +207,8 @@ export default {
         }
     },
     init () {
+      Indicator.open();
       let that = this;
-
       let options = {
       'showButton': true,//是否显示定位按钮
       'buttonPosition': 'LB',//定位按钮的位置
@@ -236,11 +217,10 @@ export default {
       'showMarker': true,//是否显示定位点
       'markerOptions':{//自定义定位点样式，同Marker的Options
         'offset': new AMap.Pixel(-18, -36),
-        'content':'<img src="https://a.amap.com/jsapi_demos/static/resource/img/user.png" style="width:36px;height:36px"/>'
+        'content':`<img src=${this.localAddress} style="width:36px;height:36px"/>`
       },
       'showCircle': false,//是否显示定位精度圈
       }
-
       //按钮
       AMap.plugin(["AMap.Geolocation", 'AMap.ToolBar'], function() {  
           //定位
@@ -248,95 +228,61 @@ export default {
           that.map.addControl(geolocation);
           geolocation.getCurrentPosition(function(status,result){
             if(status=='complete'){
+              showSuccess('')
               that.showLocationMsg(result)
             }else{
+              showError(result)
               that.showLocationMsg(result)
             }
           });
-
-         
       });
     
 
     },
     showLocationMsg(data){
       console.log('data',data)
-      // alert(JSON.stringify(data))
+     
       if(data.message == "Geolocation permission denied."){
+         showError('定位失败，请允许')
         navigator.geolocation.getCurrentPosition(this.showPosition(),this.showError());
       }
       if(data.info == 'SUCCESS'){
-        console.log(data.position);
-        this.myLat = data.position.lat
-        this.myLng = data.position.lng
+        console.log('position',data.position);
+        showSuccess('')
       }
-
     },
 // 实例化点标记 
     addMarker(item = [],data = {headImage:null}) {
       let that = this;
-      // that.map.clearMap();
         //创建icon
         var icon = new AMap.Icon({
               size: new AMap.Size(40, 40),
-              image: data.headImage == null ? 'https://upload.jianshu.io/users/upload_avatars/1758676/fa0d96a7c0c6.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/180/h/180' : data.headImage,
-              // image: 'https://upload.jianshu.io/users/upload_avatars/1758676/fa0d96a7c0c6.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/180/h/180',
+              image: data.headImage == null ? that.defaultPic : data.headImage,
               imageSize: new AMap.Size(40, 40) 
         });
 
         //实例化信息窗体  
         let title = 'title',
             content = [];
-        content.push("contentcontentcontentcontent");
-        // content.push("电话：010-64733333"); 
-        // content.push("<div><button></div>");
-
+            content.push('');
         let marker = new AMap.Marker({
             icon: icon,
-            // position: item.length == 0 ? that.returnGetCenter() : item,
             position: item.length == 0 ? that.map.getCenter() : item,
             map:that.map,
             offset: new AMap.Pixel(-26, -55),
         });
-        // console.log('create',that.createInfoWindow(title, content.join("<br/>"),data))
         //鼠标点击marker弹出自定义的信息窗体
         marker.markId = data.markId
         marker.on('click',this.mclick);
-
-        // AMap.event.addListener(marker, 'click', function () {
-        //    let infoWindow = new AMap.InfoWindow({
-        //     isCustom: true,  //使用自定义窗体
-        //     content: that.initInfoWindow(title, content.join("<br/>"),data),
-        //     offset: new AMap.Pixel(16, -45)
-        // });
-        //     infoWindow.open(that.map, marker.getPosition());
-        // });
-
-
     },
     mclick(e){
+      this.e = e
       this.handleGetMarkDetail(e)
     },
+
     //构建自定义信息窗体
-    async createInfoWindow(title, content,data) {
-        // console.log('data',data)
-        // console.log('content',content)
-        // let that = this;
-        // this.handleGetMarkDetail(data,title,content)
-         
-        // console.log('test',test)
-        // console.log('handleGetMarkDetail',this.handleGetMarkDetail(data,title,content).then((test)=>{console.log('test',test)}))
-
-
-       
-    },
-
     initInfoWindow(title,content,data){
 
-      //  let test = await this.handleGetMarkDetail(data,title,content)
-      //   console.log('test',test)
-
-        console.log('datadatadata',data)
         var info = document.createElement("div");
         info.className = "custom-info input-card content-window-card";
 
@@ -348,7 +294,7 @@ export default {
         var closeX = document.createElement("img");
         top.className = "info-top";
         titleD.innerHTML = title;
-        closeX.src = "https://webapi.amap.com/images/close2.gif";
+        closeX.src = this.closePic;
         closeX.onclick = this.closeInfoWindow;
 
         top.appendChild(titleD);
@@ -366,18 +312,45 @@ export default {
         var flag = document.createElement("div");
         flag.className = "info-button";
         flag.style.backgroundColor = 'white';
+
         let leftFlag = document.createElement('button');
-        leftFlag.className = 'info-button-left'
-        leftFlag.innerHTML ='关注'
-        leftFlag.onclick = this.handleAttention.bind(this,data)
-
         let rightFlag = document.createElement('button');
-        rightFlag.className = 'info-button-right'
-        rightFlag.innerHTML='右边边哈哈'
-        rightFlag.onclick = this.handleCancelAttention.bind(this,data)
 
-        flag.appendChild(leftFlag)
-        flag.appendChild(rightFlag)
+        //其他人
+        if(!data.selfStatus){
+          if(data.attentionStatus){
+            //已经关注
+            leftFlag.className = 'button-cancel'
+            leftFlag.innerHTML='取消关注'
+            leftFlag.onclick = this.handleCancelAttention.bind(this,data)
+          }else{
+            //未关注
+            leftFlag.className = 'button-default'
+            leftFlag.innerHTML ='关注'
+            leftFlag.onclick = this.handleAttention.bind(this,data)
+          }
+
+          if(data.status == 1){
+            rightFlag.className = 'button-complete'
+            rightFlag.innerHTML='已推广'
+          }else{
+             rightFlag.className = 'button-reject'
+             rightFlag.innerHTML='未推广'
+          }
+          
+          flag.appendChild(leftFlag)
+          flag.appendChild(rightFlag)
+        }else{
+          //自己
+          let buttonType = {...this.buttonType}
+          if(data.status == 0){
+            rightFlag.onclick = this.handlePublicPopularMsg.bind(this,data.markId)
+          }
+          rightFlag.className = buttonType[`${data.status}`]['class']
+          rightFlag.innerHTML= buttonType[`${data.status}`]['text']
+          flag.appendChild(rightFlag)
+        }
+
         info.appendChild(flag);
 
         // 定义底部内容
@@ -387,7 +360,7 @@ export default {
         bottom.style.top = '0px';
         bottom.style.margin = '0 auto';
         var sharp = document.createElement("img");
-        sharp.src = "https://webapi.amap.com/images/sharp.png";
+        sharp.src = this.sharpPic;
         bottom.appendChild(sharp);
         info.appendChild(bottom);
         return info;
@@ -404,6 +377,8 @@ export default {
                 let res = await attention(data.userId)
                 if(res.status === 200){
                     showSuccess('关注成功！')
+                    this.closeInfoWindow()
+                    this.handleGetMarkDetail(this.e)
                 }else{
                     showError(res.msg||res.error)
                 }
@@ -423,7 +398,8 @@ export default {
                 let res = await cancelAttention(data.userId)
                 if(res.status === 200){
                     showSuccess('已取消关注!')
-                
+                this.closeInfoWindow()
+                    this.handleGetMarkDetail(this.e)
                 }else{
                     showError(res.msg||res.error)
                 }
@@ -434,26 +410,30 @@ export default {
             return
         }
     },
-
-    showInfoM(e){
-      console.log('e',e)
-      // alert(e);
+    //发布推广
+    async handlePublicPopularMsg(markId){
+            Indicator.open();
+            try {
+                let res = await publicPopularMsg(markId)
+                if(res.status === 200){
+                    showSuccess('已申请推广!')
+                    this.closeInfoWindow()
+                    this.handleGetMarkDetail(this.e)
+                }else{
+                    showError(res.msg||res.error)
+                }
+            } catch (error) {
+            showError('网络错误，请稍后重试！')
+            }
     },
-    getMypostion(){
-      alert(`lat:${this.myLat},lng:${this.myLng}`)
-      this.login()
-    },
-    postPostion(){
 
-    },
-
+    //定位事件
     showPosition(position){
       console.log('position',position)
     },
 
     showError(error){
       console.log('error',error)
-      
     }
   }
 }
@@ -558,14 +538,53 @@ html, body, #container {
         }
 
         .custom-info {
-            border: solid 1px silver;
+              width: 60vw;
+            border: 1px solid #ebebeb;
+    border-radius: 3px;
+    transition: .2s;
+            box-sizing: content-box;
+            box-shadow: 2px 3px 8px #888888;
+        }
+        div.info-button{
+          display: flex;
+          padding: 0 8px 5px;
+          margin: 0 auto;
+          justify-content: space-between;
+        }
+        div.info-button button{
+          padding: 10px 20px;
+          color: #fff;
+          background-color: #409eff;
+          border-color: #409eff;
+          border-radius: 5px;
+        }
+        div.info-button .button-default{
+          background-color: #409eff;
+          border-color: #409eff;
+        }
+        div.info-button .button-complete{
+          background-color: #b3e19d;
+          border-color: #b3e19d;
+        }
+        div.info-button .button-reject{
+          background-color: #fab6b6;
+          border-color: #fab6b6;
+        }
+        div.info-button .button-wait{
+          background-color: #c8c9cc;
+          border-color: #c8c9cc;
+        }
+
+        div.info-button .button-cancel{
+          background-color: #f56c6c;
+          border-color:#f56c6c;
         }
 
         div.info-top {
             position: relative;
             background: none repeat scroll 0 0 #F9F9F9;
-            border-bottom: 1px solid #CCC;
-            border-radius: 5px 5px 0 0;
+            border-bottom: 1px solid #ebebeb;
+            border-radius: 3px 3px 0 0;
         }
 
         div.info-top div {
@@ -590,7 +609,7 @@ html, body, #container {
 
         div.info-middle {
             font-size: 12px;
-            padding: 10px 6px;
+            padding: 10px 10px;
             line-height: 20px;
         }
 
