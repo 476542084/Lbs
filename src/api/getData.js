@@ -25,7 +25,7 @@ export const login = (username, password) => fetch(url + '/login', {
     password
 }, 'POST')
 
-//获取关注信息流
+//获取关注信息流--done
 export const getAttentionMsgList = (userId = store.state.userInfo.userId) => fetch(url + `/user/${userId}/attentionMsgList`)
 
 //管理员
@@ -160,14 +160,14 @@ export const likeExperience = (commId,likeFlag,unlikeFlag,userId = store.state.u
     userId
 }, 'POST')
 
-//发布心得
+//发布心得--done
 export const postExperience = (title,content,userId = store.state.userInfo.userId) => fetch(url + '/experience/postExperience', {
     content,
     title,
     userId
 }, 'POST')
 
-//回复心得
+//回复心得--done
 export const replyExperience = (commId,content,userId = store.state.userInfo.userId) => fetch(url + '/experience/replyExperience', {
     commId,
     content,
