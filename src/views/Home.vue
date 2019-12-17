@@ -21,6 +21,7 @@
                 :closeOnClickModal=false
                 popup-transition="popup-fade">
                 <div>
+                    <div class="popup-diy-title"><p>标注内容</p></div>
                     <mt-field label="标题" placeholder="请输入标题" :attr="{ maxlength: 25 }" v-model="title"></mt-field>
                     <mt-field label="详细内容" placeholder="请输入详细内容" :attr="{ maxlength: 160 }" type="textarea" rows="6" v-model="content"></mt-field>
                     <div class="popup-button">

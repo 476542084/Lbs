@@ -148,9 +148,8 @@ import moment from 'moment'
 import LbsNav from '@/components/nav'
 import {showError,showSuccess,compressImage,canvasToBlob} from '@/utils/common'
 export default {
-  name: 'Experience',
+  name: 'experience',
   components: {Cell,LbsNav},
-  props:{commList:Array},
   data(){
     return{
         responseText:'',
@@ -176,16 +175,8 @@ export default {
   },
   created() {
       this.token = this.$store.state.token || ''
-      if(this.commList != undefined){
-        let data = []
-        this.commList.map((item) => {
-            data.push({...item})
-         })
-        this.List = data
-      }else{
-        if(this.token != ''){
-            this.handleGetExperienceHome()
-        }
+      if(this.token != ''){
+        this.handleGetExperienceHome()
       }
   },
   mounted () {
@@ -271,6 +262,15 @@ export default {
                  res.result.map((item) => {
                     data.push({...item})
                 })
+                res.result.map((item) => {
+                    data.push({...item})
+                })
+
+                res.result.map((item) => {
+                    data.push({...item})
+                })
+
+
                 this.List = data
             }else{
                 showError(res.msg||res.error)

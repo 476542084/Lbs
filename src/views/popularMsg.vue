@@ -4,7 +4,7 @@
 
         <div v-if="List.length == 0" class="empty-div">
             <p><img :src="emptyPic" alt=""></p>
-            <p>暂无推广信息</p>
+            <p>暂无推广</p>
         </div>
 
         <div v-if="List.length != 0" class="popularMsg-content">
@@ -43,8 +43,9 @@ import moment from 'moment'
 import LbsNav from '@/components/nav'
 import {showError,showSuccess,compressImage,canvasToBlob} from '@/utils/common'
 export default {
-  name: 'popularMsg',
+  name: 'PopularMsg',
   components: {Cell,LbsNav},
+  props:{markList:Array},
   data(){
     return{
         List:[],    
@@ -54,17 +55,37 @@ export default {
     }
   },
   created() {
+    //   console.log('markList',this.markList)
       this.token = this.$store.state.token
-      if(this.token != ''){
-        this.handleGetUserMsg()
+    //   Indicator.open();
+      if(this.markList != undefined){
+            // this.List = this.markList
+      console.log('markList111',this.markList)
+
+            showSuccess('')
+                let data = []
+                 this.markList.map((item) => {
+                    item.showAddress = ''
+                    data.push({...item})
+                })
+                this.List = data
+
+
+      }else{
+      console.log('markList222',this.markList)
+
+        if(this.token != ''){
+            this.handleGetUserMsg()
+        }
       }
+      
   },
   mounted () {
 
   },
   filters:{
       dateFormat:function(value){
-        return moment(value).format("- YYYY-MM-DD HH:mm")
+        return moment(value).format("YYYY/MM/DD HH:mm")
       }
   },
   methods:{
@@ -95,26 +116,6 @@ export default {
                     item.showAddress = ''
                     data.push({...item})
                 })
-                //  res.result.map((item) => {
-                //     item.showAddress = ''
-                //     data.push({...item})
-                // })
-                //  res.result.map((item) => {
-                //     item.showAddress = ''
-                //     data.push({...item})
-                // })
-                //  res.result.map((item) => {
-                //     item.showAddress = ''
-                //     data.push({...item})
-                // })
-                //  res.result.map((item) => {
-                //     item.showAddress = ''
-                //     data.push({...item})
-                // })
-                //  res.result.map((item) => {
-                //     item.showAddress = ''
-                //     data.push({...item})
-                // })
                 this.List = data
             }else{
                 showError(res.msg||res.error)

@@ -38,14 +38,14 @@ export default {
    
   },
   mounted () {
-    //   if(this.$store.state.token !== ''){
-    //       this.handleGetUserMsg()
-    //   }
+      if(this.token !== ''){
+          this.handleGetUserMsg()
+      }
       //获取头像
-    if(this.$store.state.userInfo.headImage && this.$store.state.userInfo.headImage !== null){
-      this.userPic = this.$store.state.userInfo.headImage
-    }
-    this.$store.state.userInfo.name && (this.userName = this.$store.state.userInfo.name)
+    // if(this.$store.state.userInfo.headImage && this.$store.state.userInfo.headImage !== null){
+    //   this.userPic = this.$store.state.userInfo.headImage
+    // }
+    // this.$store.state.userInfo.name && (this.userName = this.$store.state.userInfo.name)
 
   },
   methods:{

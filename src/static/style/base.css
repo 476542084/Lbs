@@ -96,6 +96,7 @@ button {
 
 
 .empty-div{
+    font-size: 1.4rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -110,8 +111,14 @@ button {
 
 
 /* mint */
+
+.popup-diy-title{
+    text-align: center;
+    font-size: 2rem;
+    padding: 5px 0;
+    border-bottom: 1px solid #cccbcb;
+}
 .mint-popup-bottom{
-    /* top: 0 !important; */
     border-radius: 20px 20px 0 !important;
     top: 20px!important;
     width: 100% !important;

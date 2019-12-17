@@ -10,6 +10,7 @@ const User = ()=> import('./views/user.vue')
 const Register = ()=> import('./views/register.vue')
 const PopularMsg = ()=> import('./views/popularMsg.vue')
 const Experience = ()=> import('./views/experience.vue')
+const Attention = ()=> import('./views/attention.vue')
 
 const router = new Router({
     //指定路由选中时的样式类名
@@ -58,6 +59,11 @@ const router = new Router({
             path:'/experience',
             name:'experience',
             component: Experience 
+        },
+        {
+            path:'/attention',
+            name:'attention',
+            component: Attention 
         }
     ]
 })

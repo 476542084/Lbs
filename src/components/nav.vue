@@ -12,7 +12,7 @@
             <img slot="icon" src="@/assets/index.png">
             主页
         </mt-tab-item>
-        <mt-tab-item id="attenttion">
+        <mt-tab-item id="attention">
             <img slot="icon" src="@/assets/attentionIndex.png">
             关注
         </mt-tab-item>
@@ -36,7 +36,6 @@ export default {
   },
   methods:{
       handleRouter(){
-          
          this.$router.push({path: '/login'});
       }
   },
@@ -44,10 +43,7 @@ export default {
       selected:{
           handler(newName, oldName) {
             this.$router.push({path: `/${newName}`});
-            console.log('newName',newName)
-            console.log('oldName',oldName)
     　　    },
-    // 　　immediate: true
       }
   }
 }
