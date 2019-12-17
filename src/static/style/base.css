@@ -94,10 +94,42 @@ button {
     background: none;
 }
 
+
+.empty-div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    flex-flow: column;
+}
+.empty-div img{
+    width: 100px;
+    height: 100px;
+}
+
+
 /* mint */
+.mint-popup-bottom{
+    /* top: 0 !important; */
+    border-radius: 20px 20px 0 !important;
+    top: 20px!important;
+    width: 100% !important;
+}
+.popup-button{
+    display: flex;
+    width: 90%;
+    justify-content: space-between;
+    margin: 0 auto;
+    padding: 10px 0;
+  }
+  .popup-button button{
+    width: 40%;
+  }
+
 .mint-tabbar {
     position: fixed !important;
-    z-index: 9999999 !important;
+    z-index: 999 !important;
 }
 .amap-icon img{
     border-radius: 50%;

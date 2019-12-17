@@ -5,7 +5,7 @@ const url = '/api'
 
 //高德地图
 
-//用户接口 
+//逆地理编码--done
 export const getAmapAddress = (lat, lng) => fetch('/amap', {
     // output:'xml',
     location:`${lng},${lat}`,
@@ -15,6 +15,9 @@ export const getAmapAddress = (lat, lng) => fetch('/amap', {
     batch:false,
     roadlevel:0
 })
+
+
+//用户接口
 
 //登录--done
 export const login = (username, password) => fetch(url + '/login', {
@@ -111,7 +114,7 @@ export const getMobileHome = (userId = store.state.userInfo.userId) => fetch(url
 //获取推广信息审核列表
 export const getPcCheckList = (userId = store.state.userInfo.userId) => fetch(url + '/mark/pcCheckList', {userId})
 
-//获取校园推广流
+//获取校园推广流--done
 export const getPopularMsg = (userId = store.state.userInfo.userId) => fetch(url + '/mark/popularMsg', {userId})
 
 //发布信息功能--done
@@ -133,13 +136,13 @@ export const publicPopularMsg = (markId,userId = store.state.userInfo.userId) =>
 //心得交流接口
 
 
-//获取心得交流详情
+//获取心得交流详情--done
 export const getExperienceDetail = (commId,userId = store.state.userInfo.userId) => fetch(url + '/experience/experienceDetail', {
     commId,
     userId
 }, 'POST')
 
-//获取心得交流首页
+//获取心得交流首页--done
 export const getExperienceHome = (userId = store.state.userInfo.userId) => fetch(url + '/experience/experienceHome', {userId})
 
 //管理员
@@ -158,7 +161,7 @@ export const likeExperience = (commId,likeFlag,unlikeFlag,userId = store.state.u
 }, 'POST')
 
 //发布心得
-export const postExperience = (content,title,userId = store.state.userInfo.userId) => fetch(url + '/experience/postExperience', {
+export const postExperience = (title,content,userId = store.state.userInfo.userId) => fetch(url + '/experience/postExperience', {
     content,
     title,
     userId

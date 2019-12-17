@@ -4,33 +4,34 @@
     <!-- <div>
         <mt-header fixed title="基于lbs社交"></mt-header>
     </div> -->
-    <div class="home">
-      <div class="user">
-        <!-- <img class="index-headImg" :src=userPic alt="头像"> -->
-      </div>
-      <div class="center-icon">
-        <img src="@/assets/position.png" alt="坐标">
-      </div>
-      <div class="add-icon">
-        <img  @click="handleAddMarker"  src='@/assets/addAction.png' alt="添加">
-      </div>
-      <mt-popup
-          v-model="popupVisible"
-          :closeOnClickModal=false
-          popup-transition="popup-fade">
-          <div>
-            <mt-field label="标题" placeholder="请输入标题" :attr="{ maxlength: 25 }" v-model="title"></mt-field>
-            <mt-field label="详细内容" placeholder="请输入详细内容" :attr="{ maxlength: 160 }" type="textarea" rows="6" v-model="content"></mt-field>
-            <div class="popup-button">
-              <mt-button  type="primary" @click.native="actionAddMarker">确定</mt-button>
-              <mt-button  plain @click.native="handleCancel">取消</mt-button>
+    <div >
+        <div v-if="token == ''" class="empty-div">
+            <p><img :src="emptyPic" alt=""></p>
+            <p>请登录！</p>
+        </div>
+        <div v-if="token != ''" class="home" >
+            <div class="center-icon">
+                <img src="@/assets/position.png" alt="坐标">
             </div>
-
-          </div>
-        </mt-popup>
-      <div id="container" style="width:100%;height:600px">
-      </div>
-       
+            <div class="add-icon">
+                <img  @click="handleAddMarker"  src='@/assets/addAction.png' alt="添加">
+            </div>
+            <mt-popup
+                v-model="popupVisible"
+                :closeOnClickModal=false
+                popup-transition="popup-fade">
+                <div>
+                    <mt-field label="标题" placeholder="请输入标题" :attr="{ maxlength: 25 }" v-model="title"></mt-field>
+                    <mt-field label="详细内容" placeholder="请输入详细内容" :attr="{ maxlength: 160 }" type="textarea" rows="6" v-model="content"></mt-field>
+                    <div class="popup-button">
+                    <mt-button  type="primary" @click.native="actionAddMarker">确定</mt-button>
+                    <mt-button  plain @click.native="handleCancel">取消</mt-button>
+                    </div>
+                </div>
+            </mt-popup>
+            <div id="container" style="width:100%;height:600px">
+            </div>
+        </div>
     </div>
    <LbsNav propSelected="home"></LbsNav>
   </div>
@@ -57,6 +58,7 @@ export default {
         2:{class:'button-reject',text:'推广被拒'},
         3:{class:'button-wait',text:'推广审核中'},
       },
+      emptyPic: require('@/assets/emptyPic.png'),
       localAddress: require('@/static/images/localAddress.png'),
       defaultPic: require('@/assets/defaultPic.png'),
       closePic: require('@/static/images/close.gif'),
@@ -72,9 +74,15 @@ export default {
     }
   },
   created() {
-   
+   this.token = this.$store.state.token
+//    if(this.token != ''){
+       
+//    }
   },
   mounted () {
+    if(this.token == ''){
+        return
+    }
       this.map = new AMap.Map('container', {
         resizeEnable: true,
         zoom: 8
@@ -87,18 +95,21 @@ export default {
 
 
     this.init()
+    if(this.token != ''){
     document.querySelector('#container').style.height = (document.documentElement.clientHeight || document.body.clientHeight) + 'px'
 
+    }
+
     //获取所有标注信息
-    if(this.$store.state.token !== ''){
+    if(this.token !== ''){
           this.handleGetMobileHome()
     }
 
     console.log('this.$store',this.$store)
     //获取头像
-    if(this.$store.state.userInfo.headImage && this.$store.state.userInfo.headImage !== null){
-      this.userPic = this.$store.state.userInfo.headImage
-    }
+    // if(this.$store.state.userInfo.headImage && this.$store.state.userInfo.headImage !== null){
+    //   this.userPic = this.$store.state.userInfo.headImage
+    // }
     
   },
   methods:{
@@ -107,7 +118,7 @@ export default {
         try {
           let res = await getMobileHome()
           if(res.status === 200){
-            showSuccess('')
+           
             if(res.result.length > 0){
               let data = []
               res.result.map((resItem) => {
@@ -116,6 +127,7 @@ export default {
                 this.addMarker(data,resItem)
                 data.length = 0
               })
+               showSuccess('')
             }
           }else{
             showError(res.msg||res.error)
@@ -148,7 +160,7 @@ export default {
     },
     //添加标注点
     handleAddMarker(){
-      MessageBox.confirm('确定标注该位置吗？').then(action => {
+        MessageBox.confirm('确定标注该位置吗？').then(action => {
             if(action == 'confirm'){
                 this.popupVisible = true
             }
@@ -451,16 +463,7 @@ export default {
     bottom: -50px !important;
 }
 
-.popup-button{
-  display: flex;
-  width: 90%;
-  justify-content: space-between;
-  margin: 0 auto;
-  padding: 10px 0;
-}
-.popup-button button{
-  width: 40%;
-}
+
    p.my-desc {
         margin: 5px 0;
         line-height: 150%;

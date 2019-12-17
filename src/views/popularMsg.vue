@@ -1,23 +1,35 @@
 <!-- popularMsg -->
 <template>
     <div class="popularMsg-container">
-        <div class="popularMsg-content">
-            <div class="popularMsg-item" v-for="(item,index) in List" :key="index">
+
+        <div v-if="List.length == 0" class="empty-div">
+            <p><img :src="emptyPic" alt=""></p>
+            <p>暂无推广信息</p>
+        </div>
+
+        <div v-if="List.length != 0" class="popularMsg-content">
+            <div class="popularMsg-item" v-for="(item,index) in List" :key="index" @click="haneleGetAmapAddress(item.lat,item.lng,index,item.showAddress)">
                 <div class="popularMsg-img">
                     <img :src="item.headImage" alt="头像">
+                    <div style="display: flex;
+                        flex-flow: column;
+                        justify-content: center;"
+                    >
+                        <p class="popularMsg-name">{{item.name}}</p>
+                        <p class="popularMsg-title">{{item.title}}</p>
+                    </div>
                 </div>
                 <div class="popularMsg-detail">
-                    <p class="popularMsg-name">{{item.name}}</p>
-                    <p class="popularMsg-title">{{item.title}}</p>
-                    <p class="popularMsg-detail-content">{{item.content}}</p>
+                    <div class="popularMsg-detail-div">
+                        <p class="popularMsg-detail-content">{{item.content}}</p>
+                    </div>
+                  
                     <p class="popularMsg-time">{{item.createTime | dateFormat}}</p>
-                    <button class="popularMsg-button-address" v-if="item.showAddress == ''" @click="haneleGetAmapAddress(item.lat,item.lng,index)" ><span><img class="popularMsg-click-image" :src="clickPic" alt=""></span>获取具体地址</button>
+                    <button class="popularMsg-button-address" v-if="item.showAddress == ''" ><span><img class="popularMsg-click-image" :src="clickPic" alt=""></span>获取具体地址</button>
                     <p class="popularMsg-address" v-else >地点:{{item.showAddress}}</p>
                 </div>
             </div>
         </div>
-        
-        
         <LbsNav propSelected="popularMsg"></LbsNav>
     </div>
 </template>
@@ -37,22 +49,27 @@ export default {
     return{
         List:[],    
         clickPic: require('@/assets/clickPic.png'),
-        token:this.$store.state.token
+        emptyPic: require('@/assets/emptyPic.png'),
+        token:''
     }
   },
   created() {
-   this.handleGetUserMsg()
+      this.token = this.$store.state.token
+      if(this.token != ''){
+        this.handleGetUserMsg()
+      }
   },
   mounted () {
 
   },
   filters:{
       dateFormat:function(value){
-            return moment(value).format("- YYYY-MM-DD HH:mm")
+        return moment(value).format("- YYYY-MM-DD HH:mm")
       }
   },
   methods:{
-    async haneleGetAmapAddress(lat,lng,index){
+    async haneleGetAmapAddress(lat,lng,index,address){
+        if(address != '') return
         Indicator.open();
         try {
             let res = await getAmapAddress(lat, lng)
@@ -78,6 +95,26 @@ export default {
                     item.showAddress = ''
                     data.push({...item})
                 })
+                //  res.result.map((item) => {
+                //     item.showAddress = ''
+                //     data.push({...item})
+                // })
+                //  res.result.map((item) => {
+                //     item.showAddress = ''
+                //     data.push({...item})
+                // })
+                //  res.result.map((item) => {
+                //     item.showAddress = ''
+                //     data.push({...item})
+                // })
+                //  res.result.map((item) => {
+                //     item.showAddress = ''
+                //     data.push({...item})
+                // })
+                //  res.result.map((item) => {
+                //     item.showAddress = ''
+                //     data.push({...item})
+                // })
                 this.List = data
             }else{
                 showError(res.msg||res.error)
@@ -91,18 +128,24 @@ export default {
 </script>
 
 <style scoped>
+
 .popularMsg-content{
-        padding-bottom: 100px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
 }
 .popularMsg-item{
     display: flex;
+    flex-flow: column;
     border: 1px solid #ebebeb;
     border-radius: 3px;
     box-sizing: content-box;
     box-shadow: 0px 3px 7px -1px #888888;
     margin-bottom: 15px;
 }
-
+.popularMsg-img{
+    display: flex;
+    border-bottom: 1px solid #eae4e4;
+}
 .popularMsg-img>img{
     width: 40px;
     height: 40px;
@@ -121,11 +164,28 @@ export default {
 .popularMsg-title{
     font-size: 18px;
     font-weight: bold;
-    margin: 7px 0;
+    /* margin: 7px 0; */
+     overflow: hidden;  
+      display: -webkit-box;  
+     -webkit-line-clamp: 1;
+
+      -webkit-box-orient: vertical; 
+}
+.popularMsg-detail-div{
+    /* box-shadow: 6px 5px 5px -4px #e5e3e3; */
+    /* border: 1px solid #e5e3e3; */
+    padding: 5px 3px;
+    /* border-radius: 3px; */
 }
 .popularMsg-detail-content{
     font-size: 15px;
     text-align: justify;
+
+     overflow: hidden;  
+      display: -webkit-box;  
+     -webkit-line-clamp: 4;
+
+      -webkit-box-orient: vertical; 
 }
 .popularMsg-time,.popularMsg-address{
     font-size: 15px;
