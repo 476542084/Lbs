@@ -15,9 +15,12 @@ const PopularMsg = ()=> import('./views/popularMsg.vue')
 const Experience = ()=> import('./views/experience.vue')
 const Attention = ()=> import('./views/attention.vue')
 
+
 //管理员-PC端
 const Index = ()=> import('./views/admin/index.vue')
 const Login_PC = ()=> import('./views/admin/login.vue')
+
+const test = ()=> import('./views/admin/checkPopular.vue')
 
 const routes_mobile = [
     {
@@ -82,7 +85,13 @@ const routes_pc = [
         path:'/login',
         name:'login',
         component: Login_PC 
+    },
+    {
+        path:'/test',
+        name:'test',
+        component: test 
     }
+
 ]
 
 const router = new Router({

@@ -7,14 +7,15 @@ import Mint from 'mint-ui';
 import store from './store'
 import 'mint-ui/lib/style.css';
 
-
+import Element from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 import VueResource from 'vue-resource';
 
 import {isMobile} from '@/utils/common'
 import * as rem from './config/rem'
 
-
+Vue.use(Element);
 Vue.use(Mint);
 Vue.use(VueResource);
 Vue.config.productionTip = false
