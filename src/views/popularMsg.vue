@@ -7,7 +7,7 @@
             <p>暂无推广</p>
         </div>
 
-        <div v-if="List.length != 0" class="popularMsg-content">
+        <div v-if="List.length != 0" class="popularMsg-content" :style="{height:(markList != undefined ? 'calc(100vh - 100px)':'calc(100vh - 60px)')}">
             <div class="popularMsg-item" v-for="(item,index) in List" :key="index" @click="haneleGetAmapAddress(item.lat,item.lng,index,item.showAddress)">
                 <div class="popularMsg-img">
                     <img :src="item.headImage" alt="头像">

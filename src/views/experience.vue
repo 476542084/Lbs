@@ -7,8 +7,8 @@
             <p>暂无心得</p>
         </div>
 
-        <div v-if="List.length != 0" class="experience-content">
-            <div class="experience-post" @click="handlePostExperience">
+        <div v-if="List.length != 0" class="experience-content" :style="{height:(commList != undefined ? 'calc(100vh - 100px)':'calc(100vh - 50px)')}">
+            <div v-if="showPostExperience" class="experience-post" @click="handlePostExperience">
                 <img :src="postExperience" alt="发表心得">
             </div>
             <div class="experience-item" v-for="(item,index) in List" :key="index" @click="handleGetExperienceDetail(item)">
@@ -40,8 +40,8 @@
                 popup-transition="popup-fade">
                 <div>
                     <div class="popup-diy-title"><p>发表心得</p></div>
-                    <mt-field label="标题" placeholder="请输入标题" :attr="{ maxlength: 25 }" v-model="postTitle"></mt-field>
-                    <mt-field label="详细内容" placeholder="请输入详细内容" :attr="{ maxlength: 500 }" type="textarea" rows="8" v-model="postContent"></mt-field>
+                    <mt-field  placeholder="请输入标题" :attr="{ maxlength: 25 }" v-model="postTitle" style="font-weight:300"></mt-field>
+                    <mt-field  placeholder="请输入详细内容" :attr="{ maxlength: 500 }" type="textarea" rows="8" v-model="postContent"></mt-field>
                     <div class="popup-button">
                         <mt-button  type="primary" @click.native="actionPostExperience">确定</mt-button>
                         <mt-button  plain @click.native="handleCancel">取消</mt-button>
@@ -55,7 +55,7 @@
             popup-transition="popup-fade">
             <div>
                 <div class="popup-diy-title"><p>回复心得</p></div>
-                <mt-field label="详细内容" placeholder="请输入详细内容" :attr="{ maxlength: 160 }" type="textarea" rows="3" v-model="responseText"></mt-field>
+                <mt-field  placeholder="请输入详细内容" :attr="{ maxlength: 160 }" type="textarea" rows="3" v-model="responseText"></mt-field>
                 <div class="popup-button">
                     <mt-button  type="primary" @click.native="actionResponse">确定</mt-button>
                     <mt-button  plain @click.native="handleCancelResponse">取消</mt-button>
@@ -99,7 +99,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div v-if="detailData.result && detailData.result.length == 0" style="margin-top: 6rem">
+                        <div v-if="detailData.result && detailData.result.length == 0" >
                             <div class="empty-div" style="height: auto;">
                                 <p><img :src="emptyPic" alt="暂无回复"></p>
                                 <p>--暂无回复--</p>
@@ -141,7 +141,7 @@
 
 <script>
 
-import {getExperienceHome,getExperienceDetail,postExperience,getCheckList,replyExperience,getAttentionMsgList} from '@/api/getData'
+import {getExperienceHome,getExperienceDetail,postExperience,replyExperience,getAttentionMsgList} from '@/api/getData'
 import { async } from 'q'
 import { Cell,Indicator,MessageBox} from 'mint-ui';
 import moment from 'moment'
@@ -153,6 +153,7 @@ export default {
   props:{commList:Array},
   data(){
     return{
+        showPostExperience:true,
         responseText:'',
         tempCommData:{},
         responseVisible:false,
@@ -170,13 +171,13 @@ export default {
         unLikePic:require('@/assets/unLikePic.png'),
         postExperience:require('@/assets/postExperience.png'),
         responsePic:require('@/assets/responsePic.png'),
-        emptyPic: require('@/assets/emptyPic.png'),
         token:''
     }
   },
   created() {
       this.token = this.$store.state.token || ''
       if(this.commList != undefined){
+        this.showPostExperience = false
         let data = []
         this.commList.map((item) => {
             data.push({...item})
@@ -419,6 +420,12 @@ export default {
     border-bottom: 1px solid#cccbcb;
     width: 100%;
 }
+.experienceDetail-close>img{
+    margin-left: 10px;
+    width: 25px;
+    height: 25px;
+}
+
 .experienceDetail-response-item:not(:last-child){
     border-bottom: 1px solid #ebebeb;
 }
@@ -432,14 +439,10 @@ export default {
     margin-bottom: 0;
     border-bottom: 1px solid #ebebeb;
 }
-.experienceDetail-close>img{
-    margin-left: 10px;
-    width: 25px;
-    height: 25px;
-}
+
 .experienceDetail-time{
     font-size: 15px;
-    margin-top: 20px;
+    margin-top: 1rem;
     padding: 0 3px;
 }
 .experienceDetail-handleLike{

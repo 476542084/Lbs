@@ -1,6 +1,9 @@
 import fetch from './fetch'
 import store from '@/store'
-const url = '/api'
+import {baseUrl} from '../../vue.config'
+// console.log('sdssd',baseUrl)
+
+const url = baseUrl == '/' ? '/api' : baseUrl
 
 
 //高德地图
@@ -30,7 +33,7 @@ export const getAttentionMsgList = (userId = store.state.userInfo.userId) => fet
 
 //管理员
 //查看所有用户信息
-export const getUserList = (userId = store.state.userInfo.userId) => fetch(url + `/user/${userId}/userList`)
+export const getUserList = (userId = store.state.userInfo.userId) => fetch(url + `/admin/${userId}/userList`,{userId},'POST')
 
 //获取个人信息--done
 export const getUserMsg = (userId = store.state.userInfo.userId) => fetch(url + `/user/${userId}/userMsg`)
@@ -82,7 +85,7 @@ export const updateUserPic = (file, userId = store.state.userInfo.userId) => fet
 
 //首页和推广流接口
 
-//获取推广审核状态
+//获取推广审核状态--done
 export const getCheckList = (userId = store.state.userInfo.userId) => fetch(url + '/mark/checkList',{userId})
 
 //管理员
@@ -134,7 +137,6 @@ export const publicPopularMsg = (markId,userId = store.state.userInfo.userId) =>
 
 
 //心得交流接口
-
 
 //获取心得交流详情--done
 export const getExperienceDetail = (commId,userId = store.state.userInfo.userId) => fetch(url + '/experience/experienceDetail', {

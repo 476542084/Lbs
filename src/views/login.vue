@@ -21,7 +21,6 @@
 
 import {register,login} from '@/api/getData'
 import { async } from 'q'
-import store from '@/store'
 import { Field,Header,Indicator } from 'mint-ui';
 import LbsNav from '@/components/nav'
 import {showError,showSuccess} from '@/utils/common'
@@ -52,9 +51,9 @@ export default {
             if(res.status === 200){
                 console.log('res',res)
                 showSuccess('登录成功')
-                store.commit('set_token', res.token)
+                this.$store.commit('set_token', res.token)
                 sessionStorage.setItem('token',res.token);
-                store.commit('set_userInfo', res.user)
+                this.$store.commit('set_userInfo', res.user)
                 sessionStorage.setItem('userInfo',JSON.stringify(res.user));
                 this.$router.push({path:'/home'})
             }else{
