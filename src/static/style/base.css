@@ -18,7 +18,7 @@ img {
 }
 
 /*去除虚线*/
-input:focus,
+/* input:focus, */
 select:focus,
 textarea:focus,
 button:focus {

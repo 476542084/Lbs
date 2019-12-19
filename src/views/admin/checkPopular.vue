@@ -1,29 +1,11 @@
 <template>
     <div class="detail-container">
-        <h1>审核</h1>
+        <h2 style="padding: 10px;">推广审核</h2>
         <div class="table-detail">
             <el-table
-      :data="tableData"
-      style="width: 100%">
-      <el-table-column
-        prop="date"
-        label="日期"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="姓名"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="address"
-        label="地址">
-      </el-table-column>
-    </el-table>
-
-            <!-- <el-table
+                stripe
                 :data="tableData"
-                style="width: 100%">
+                style="width: 98%">
                 <el-table-column
                 label="用户"
                 width="180">
@@ -35,165 +17,168 @@
 
                 <el-table-column
                     property="title"
+                    align='center'
                     label="标题"
                     width="180"> 
                 </el-table-column>
 
                 <el-table-column
                 label="内容"
-                width="180">
+                align='center'
+                width="250">
                 <template slot-scope="scope">
                     <el-popover trigger="hover" placement="top">
                         <p>{{ scope.row.content }}</p>
                         <div slot="reference" class="name-wrapper">
-                            <el-tag size="medium">{{ scope.row.content }}</el-tag>
+                            <p class="table-overhidden-p"><img class="table-overhidden-pic" :src="clickPic" alt="">{{ scope.row.content }}</p>
                         </div>
                     </el-popover>
                 </template>
                 </el-table-column>
-                <el-table-column label="操作">
+                <el-table-column align='center' label="操作">
                 <template slot-scope="scope">
                     <el-button
+                    v-if="scope.row.status == 3"
                     size="mini"
-                    @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    type="primary"
+                    @click="handleCheckPass(scope.$index, scope.row)">通过</el-button>
+
                     <el-button
+                    v-if="scope.row.status == 3"
                     size="mini"
                     type="danger"
-                    @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    @click="handleCheckReject(scope.$index, scope.row)">拒绝</el-button>
+
+                    <el-button
+                    v-if="scope.row.status == 1"
+                    disabled
+                    size="mini"
+                    type="success">已通过</el-button>
+
+                     <el-button
+                    v-if="scope.row.status == 2"
+                    disabled
+                    size="mini"
+                    type="danger">已拒绝</el-button>
                 </template>
                 </el-table-column>
-            </el-table> -->
-            <!-- <el-table
-    :data="tableData"
-    style="width: 100%">
-    <el-table-column
-      label="日期"
-      width="180">
-      <template slot-scope="scope">
-        <i class="el-icon-time"></i>
-        <span style="margin-left: 10px">{{ scope.row.date }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="姓名"
-      width="180">
-      <template slot-scope="scope">
-        <el-popover trigger="hover" placement="top">
-          <p>姓名: {{ scope.row.name }}</p>
-          <p>住址: {{ scope.row.address }}</p>
-          <div slot="reference" class="name-wrapper">
-            <el-tag size="medium">{{ scope.row.name }}</el-tag>
-          </div>
-        </el-popover>
-      </template>
-    </el-table-column>
-    <el-table-column label="操作">
-      <template slot-scope="scope">
-        <el-button
-          size="mini"
-          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-      </template>
-    </el-table-column>
-  </el-table> -->
+            </el-table>
         </div>
     </div> 
 </template>
 
 <script>
-// import Vue from 'vue'
-// import Element from 'element-ui';
-// import 'element-ui/lib/theme-chalk/index.css';
-// Vue.use(Element);
-import {getAllUserCheckList} from '@/api/getData'
-
+import {getAllUserCheckList,markCheck} from '@/api/getData'
 export default {
   name: 'CheckPopular',
-
   data(){
     return{
+        clickPic: require('@/assets/clickPic.png'),
         userPic:require('@/assets/defaultPic.png'),
-         tableData: [{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }]
-        // tableData:[{content:'sdasdas',title:'asds',name:'sdsdw',headImage:null}]
-        // tableData: [{
-        //   date: '2016-05-02',
-        //   name: '王小虎',
-        //   address: '上海市普陀区金沙江路 1518 弄'
-        // }, {
-        //   date: '2016-05-04',
-        //   name: '王小虎',
-        //   address: '上海市普陀区金沙江路 1517 弄'
-        // }, {
-        //   date: '2016-05-01',
-        //   name: '王小虎',
-        //   address: '上海市普陀区金沙江路 1519 弄'
-        // }, {
-        //   date: '2016-05-03',
-        //   name: '王小虎',
-        //   address: '上海市普陀区金沙江路 1516 弄'
-        // }]
-        // selected: this.propSelected || 'home'
+        tableData: []
     }
   },
   created(){
   },
   mounted(){
       this.handleGetAllUserCheckList()
-
   },
   methods:{
       async handleGetAllUserCheckList(){
         try {
             let res = await getAllUserCheckList()
             if(res.status === 200){
-                // this.tableData = res.result
-                console.log('tableData',this.tableData)
-                // this.checkList = [...res.result]
-                // showSuccess('')
-                // this.checkListVisible = true
+                this.tableData = [...res.result]
             }else{
-                // showError(res.msg||res.error)
+                this.$message.error(res.msg||res.error);
             }
         } catch (error) {
-            // showError('网络错误，请稍后重试！')
+            this.$message.error('网络错误，请稍后重试！');
         }
     },
-    handleEdit(index, row) {
-        console.log(index, row);
+
+    async handleMarkCheck(index,markId,status){
+        try {
+            let res = await markCheck(markId,status)
+            if(res.status === 200){
+                if(status == 1){
+                  this.$message({
+                    type: 'success',
+                    message: '通过成功!'
+                  });
+                  this.tableData[index] && (this.tableData[index]['status'] = 1)
+                }
+                if(status == 2){
+                  this.$message({
+                    type: 'success',
+                    message: '拒绝成功!'
+                  });
+                  this.tableData[index] && (this.tableData[index]['status'] = 2)
+                }
+            }else{
+               this.$message.error(res.msg||res.error);
+            }
+        } catch (error) {
+            this.$message.error('网络错误，请稍后重试！');
+        }
     },
-    handleDelete(index, row) {
+
+    handleCheckPass(index, row) {
+        this.$confirm('确认通过该推广信息？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            this.handleMarkCheck(index,row.markId,'1')
+        }).catch(() => {        
+        });
+    },
+
+    handleCheckReject(index, row) {
         console.log(index, row);
+        this.$confirm('确认拒绝该推广信息？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            this.handleMarkCheck(index,row.markId,'2')
+        }).catch(() => {        
+        });
     }
   }
 }
 </script>
 <style  scoped>
-.table-user-img{
+.el-popper{
+    max-width: 200px !important;
+}
+.table-overhidden-pic{
     width: 15px;
     height: 15px;
-    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 5px;
+
 }
-/* .table-detail{
-    height: 600px;
-    width: 900px;
-} */
+.table-overhidden-p{
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    background-color: aliceblue;
+    border-radius: 5px;
+    padding: 0 5px;
+}
+
+.table-user-img{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+.table-detail{
+    overflow-y: auto;
+    height: calc(100vh - 130px);
+}
+
 </style>

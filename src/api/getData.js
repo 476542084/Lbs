@@ -1,8 +1,6 @@
 import fetch from './fetch'
 import store from '@/store'
 import {baseUrl} from '../../vue.config'
-// console.log('sdssd',baseUrl)
-
 const url = baseUrl == '/' ? '/api' : baseUrl
 
 
@@ -52,7 +50,8 @@ export const cancelAttention = (cancelId, userId = store.state.userInfo.userId) 
 
 //管理员
 //获取统计数据
-export const getCountData = (endTime, startTime,status,userId = store.state.userInfo.userId) => fetch(url + '/user/countData', {
+//统计数据，status 状态区分，推广信息传1，心得交流传0，标注传-1
+export const getCountData = (startTime,endTime,status,userId = store.state.userInfo.userId) => fetch(url + '/admin/countData', {
     endTime,
     startTime,
     status,
@@ -60,8 +59,8 @@ export const getCountData = (endTime, startTime,status,userId = store.state.user
 }, 'POST')
 
 //管理员
-//删除操作-心得交流/标注地点
-export const deleteByType = (id, type,userId = store.state.userInfo.userId) => fetch(url + '/user/deleteByType', {
+//删除操作-心得交流/标注地点--done
+export const deleteByType = (id, type,userId = store.state.userInfo.userId) => fetch(url + '/admin/deleteByType', {
     id,
     type,
     userId
@@ -95,15 +94,15 @@ export const getAllUserCheckList = (userId = store.state.userInfo.userId) => fet
 
 
 //管理员
-//标注地点管理列表
-export const findMarkList = (selectedUserId, userId = store.state.userInfo.userId) => fetch(url + '/mark/findMarkList', {
+//标注地点管理列表-done
+export const findMarkList = (selectedUserId, userId = store.state.userInfo.userId) => fetch(url + '/admin/findMarkList', {
     selectedUserId,
     userId
 }, 'POST')
 
 //管理员
-//审核功能(通过：1，拒绝：2)
-export const markCheck = (markId, status,userId = store.state.userInfo.userId) => fetch(url + '/mark/markCheck', {
+//推广审核功能(通过：1，拒绝：2)--done
+export const markCheck = (markId, status,userId = store.state.userInfo.userId) => fetch(url + '/admin/markCheck', {
     markId,
     status,
     userId
@@ -120,7 +119,7 @@ export const getMarkDetail = (markId,userId = store.state.userInfo.userId) => fe
 export const getMobileHome = (userId = store.state.userInfo.userId) => fetch(url + '/mark/mobileHome', {userId})
 
 //管理员
-//获取推广信息审核列表
+//获取推广信息审核列表--done
 export const getPcCheckList = (userId = store.state.userInfo.userId) => fetch(url + '/mark/pcCheckList', {userId})
 
 //获取校园推广流--done
@@ -154,8 +153,8 @@ export const getExperienceDetail = (commId,userId = store.state.userInfo.userId)
 export const getExperienceHome = (userId = store.state.userInfo.userId) => fetch(url + '/experience/experienceHome', {userId})
 
 //管理员
-//获取心得交流管理列表
-export const findExperienceList = (selectedUserId,userId = store.state.userInfo.userId) => fetch(url + '/experience/findExperienceList', {
+//获取心得交流管理列表--done
+export const findExperienceList = (selectedUserId,userId = store.state.userInfo.userId) => fetch(url + '/admin/findExperienceList', {
     selectedUserId,
     userId
 }, 'POST')

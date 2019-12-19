@@ -18,11 +18,7 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import Element from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
 import {login} from '@/api/getData'
-Vue.use(Element, { size: 'small', zIndex: 3000 });
   export default {
     name: "Login",
     data() {

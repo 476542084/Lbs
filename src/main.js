@@ -15,13 +15,14 @@ import VueResource from 'vue-resource';
 import {isMobile} from '@/utils/common'
 import * as rem from './config/rem'
 
-Vue.use(Element);
-Vue.use(Mint);
+
+
 Vue.use(VueResource);
 Vue.config.productionTip = false
-
+Vue.use(Element);
 if (isMobile()) {
   rem.rem();
+  Vue.use(Mint);
 }
 
 // 页面刷新时，重新赋值token
