@@ -167,3 +167,7 @@ border-color: #fde2e2 !important;
 .mytoast-warn span{
     color: #e03a3a !important;
 }
+
+.echart-loading{
+    height: 400px;width: calc(100% - 160px);position: fixed;
+}

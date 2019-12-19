@@ -1,10 +1,22 @@
 <template>
     <div>
       <div class="index-header">
-          <p>头部</p>
+          <span>基于LBS的在线社交系统-后台管理</span>
+          <div>
+            <img  class="user-userPic" :src=userPic alt="头像">
+            <el-dropdown style="    cursor: pointer; color:#fff">
+              <span class="el-dropdown-link">
+                退出登录<i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+          
       </div>
-      <div class="index-container">
-        <el-row class="tac">
+      <div v-loading="loading" class="index-container">
+        <el-row >
             <el-col >
                 <el-menu
                 :collapse="isCollapse"
@@ -13,12 +25,12 @@
                 :default-openeds='["dataManagement","dataView"]'
                 class="el-menu-vertical-demo">
                 <el-menu-item index="initUser">
-                    <i class="el-icon-s-operation"></i>
+                    <i class="el-icon-view"></i>
                     <span slot="title">用户列表</span>
                 </el-menu-item>
 
                 <el-menu-item index="checkPopular">
-                    <i class="el-icon-s-operation"></i>
+                    <i class="el-icon-tickets"></i>
                     <span slot="title">推广审核</span>
                 </el-menu-item>
 
@@ -28,15 +40,14 @@
                         <span slot="title">数据管理</span>
                     </template>
                     <el-menu-item-group>
-
-                    <el-menu-item index="checkMark">标注管理</el-menu-item>
-                    <el-menu-item index="checkExperience">心得管理</el-menu-item>
+                      <el-menu-item index="checkMark">标注管理</el-menu-item>
+                      <el-menu-item index="checkExperience">心得管理</el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
                             
                 <el-submenu index="dataView">
                     <template slot="title">
-                        <i class="el-icon-s-data"></i>
+                        <i class="el-icon-menu"></i>
                         <span slot="title">数据统计</span>
                     </template>
                     <el-menu-item index="markData">标注统计</el-menu-item>
@@ -86,10 +97,19 @@ export default {
   components: {InitUser, CheckPopular, CheckMark, CheckExperience, MarkData, ExperienceData, PopularData},
   data(){
     return{
+        userPic:require('@/assets/defaultPic.png'),
         isCollapse:false,
         defaultActive: 'initUser',
         selected:'initUser',
-        userList:[]
+        userList:[],
+        loading:true
+    }
+  },
+  created(){
+    if( sessionStorage.getItem('token') == '' || sessionStorage.getItem('token') == null){
+      this.$message.error('请先登录！');
+      this.$router.push({path:'/login'})
+      return false
     }
   },
   mounted(){
@@ -99,20 +119,48 @@ export default {
       handleSelect(index){
           this.selected = index
       },
+      logout(){
+        this.$confirm('确定退出登录吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.commit('del_token')
+          this.$store.commit('del_userInfo')
+          this.$router.push({path:'/login'})
+        }).catch(() => {
 
+        });
+
+      },
       async handleGetAllUser(){
         try {
             let res = await getUserList()
             if(res.status === 200){
                 this.userList = [...res.result]
+                this.loading = false
             }else{
                 this.$message.error(res.msg||res.error);
+                this.loading = false
+                if(res.msg == '权限不足，请联系管理员！'){
+                  this.$router.push({path:'/login'})
+                }
             }
         } catch (error) {
             this.$message.error('网络错误，请稍后重试！');
+                      this.loading = false
+
         }
     },
   },
+  beforeRouteEnter (to, from, next) {
+    if( sessionStorage.getItem('token') == '' || sessionStorage.getItem('token') == null){
+        alert('请先登录！')
+        next({path:'/login'})
+    }else{
+        next()
+    }
+  }
 }
 </script>
 <style scoped>
@@ -134,6 +182,16 @@ export default {
     padding: 0 25px;
     background-color: #89bf04;
     color: #fff;
+    display: flex;
+    justify-content: space-between;
+}
+.user-userPic{
+    margin-right: 10px;
+    vertical-align: middle;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    box-shadow: 2px 3px 8px #888888;
 }
 .index-container{
     display: flex;

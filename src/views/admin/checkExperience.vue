@@ -14,6 +14,7 @@
         </el-select>
         <div class="table-detail">
             <el-table
+                v-loading="loading"
                 header-align="center"
                 stripe
                 :data="tableData"
@@ -85,6 +86,7 @@ export default {
   props:{userList:Array},
   data(){
     return{
+        loading:true,
         clickPic: require('@/assets/clickPic.png'),
         userPic:require('@/assets/defaultPic.png'),
         tableData: [],
@@ -107,15 +109,19 @@ export default {
   },
   methods:{
     async handleFindExperienceList(selectId){
+        this.loading = true
         try {
             let res = await findExperienceList(selectId)
             if(res.status === 200){
                 this.tableData = [...res.result]
+                this.loading = false
             }else{
                 this.$message.error(res.msg||res.error);
+                this.loading = false
             }
         } catch (error) {
             this.$message.error('网络错误，请稍后重试！');
+            this.loading = false
         }
     },
 

@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="pc-login">
     <el-form ref="loginForm" :model="form" :rules="rules" label-width="80px" class="login-box">
       <h3 class="login-title">欢迎登录</h3>
-      <el-form-item label="账号" prop="username">
+      <el-form-item label="账号" prop="username" style=" color: #fff">
         <el-input type="text" placeholder="请输入账号" v-model="form.username"/>
       </el-form-item>
       <el-form-item label="密码" prop="password">
@@ -12,8 +12,6 @@
         <el-button type="primary" @click="onSubmit('loginForm')">登录</el-button>
       </el-form-item>
     </el-form>
-
-
   </div>
 </template>
 
@@ -56,13 +54,11 @@ import {login} from '@/api/getData'
         try {
             let res = await login(this.form.username,this.form.password)
             if(res.status === 200){
-                console.log('res',res)
-                
                 this.$store.commit('set_token', res.token)
                 sessionStorage.setItem('token',res.token);
                 this.$store.commit('set_userInfo', res.user)
                 sessionStorage.setItem('userInfo',JSON.stringify(res.user));
-                this.$router.push({path:'/home'})
+                this.$router.push({path:'/'})
             }else{
                  this.$message.error(res.msg||res.error);
             }
@@ -73,22 +69,41 @@ import {login} from '@/api/getData'
     }
   }
 </script>
-
+<style >
+  .el-form-item__label{
+     color: #fff ;
+  }
+</style>
 <style scoped>
+.pc-login{
+    position: relative;
+    height: 100vh;
+    background-image: url('../../../src/assets/bodyBg.jpg');
+    background-size:100%;
+    background-repeat:no-repeat;
+}
   .login-box {
+    background: rgba(0,0,0,0.15);
     border: 1px solid #DCDFE6;
     width: 350px;
-    margin: 180px auto;
     padding: 35px 35px 15px 35px;
     border-radius: 5px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     box-shadow: 0 0 25px #909399;
+
+    top: 50%;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .login-title {
     text-align: center;
     margin: 0 auto 40px auto;
-    color: #303133;
+    color: #fff;
+  }
+  .el-form-item__label{
+     color: #fff !important;
   }
 </style>

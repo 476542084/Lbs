@@ -14,6 +14,7 @@
         </el-select>
         <div class="table-detail">
             <el-table
+                v-loading="loading"
                 stripe
                 :data="tableData"
                 style="width: 98%">
@@ -63,6 +64,7 @@ export default {
   props:{userList:Array},
   data(){
     return{
+        loading:true,
         clickPic: require('@/assets/clickPic.png'),
         userPic:require('@/assets/defaultPic.png'),
         tableData: [],
@@ -70,13 +72,16 @@ export default {
     }
   },
   created(){
+      
+  },
+  mounted(){
+      this.loading = true
       let selectId = this.userList[0] && (this.userList[0].userId)
       this.handleFindMarkList(selectId)
   },
-  mounted(){
-  },
   methods:{
       async handleFindMarkList(selectId){
+        this.loading = true
         try {
             let res = await findMarkList(selectId)
             if(res.status === 200){
@@ -85,18 +90,19 @@ export default {
                     item.showAddress = ''
                     data.push({...item})
                 })
-
                 this.tableData = data
+                this.loading = false
             }else{
                 this.$message.error(res.msg||res.error);
+                this.loading = false
             }
         } catch (error) {
             this.$message.error('网络错误，请稍后重试！');
+            this.loading = false
         }
     },
 
     async haneleGetAmapAddress(lat,lng,index){
-       
         try {
             let res = await getAmapAddress(lat, lng)
             if(res.infocode == '10000'){
@@ -109,7 +115,6 @@ export default {
         }
 
     },
-
 
     async handleDeleteMark(index,markId,type){
         try {
@@ -138,7 +143,6 @@ export default {
         });
     },
     changeSelectUser(userId){
-
         this.handleFindMarkList(userId)
     }
   }

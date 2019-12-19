@@ -3,6 +3,7 @@
         <h2 style="padding: 10px;">推广审核</h2>
         <div class="table-detail">
             <el-table
+                v-loading="loading"
                 stripe
                 :data="tableData"
                 style="width: 98%">
@@ -73,6 +74,7 @@ export default {
   name: 'CheckPopular',
   data(){
     return{
+        loading:true,
         clickPic: require('@/assets/clickPic.png'),
         userPic:require('@/assets/defaultPic.png'),
         tableData: []
@@ -85,15 +87,19 @@ export default {
   },
   methods:{
       async handleGetAllUserCheckList(){
+        this.loading = true
         try {
             let res = await getAllUserCheckList()
             if(res.status === 200){
                 this.tableData = [...res.result]
+                this.loading = false
             }else{
                 this.$message.error(res.msg||res.error);
+                this.loading = false
             }
         } catch (error) {
             this.$message.error('网络错误，请稍后重试！');
+            this.loading = false
         }
     },
 
