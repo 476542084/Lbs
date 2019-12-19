@@ -128,6 +128,16 @@
                                             <p class="experience-detail-content experienceDetail-detail-content">{{detailItem.content}}</p>
                                         </div>
                                         <div>
+                                            <p class="experience-handleLike" >
+                                                <span v-if="detailItem.operateStatus == null" @click="handleLikeOrHate(0,detailItem.userId,1,detailIndex,detailItem.operateStatus)"><img :src="likePic" alt="赞同">{{detailItem.likeNum | likeNum}}</span>
+                                                <span v-if="detailItem.operateStatus == null" @click="handleLikeOrHate(1,detailItem.userId,1,detailIndex,detailItem.operateStatus)"><img :src="unLikePic" alt="不同意">{{detailItem.unlikeNum | likeNum}}</span>
+
+                                                <span v-if="detailItem.operateStatus == 0" @click="handleCancelLikeOrHate(-1,detailItem.userId,1,detailIndex,detailItem.operateStatus)"><img :src="likeActivePic" alt="赞同">{{detailItem.likeNum | likeNum}}</span>
+                                                <span v-if="detailItem.operateStatus == 0" @click="handleCancelLikeOrHate(-1,detailItem.userId,1,detailIndex,detailItem.operateStatus,'second')"><img :src="unLikePic" alt="不同意">{{detailItem.unlikeNum | likeNum}}</span>
+
+                                                <span v-if="detailItem.operateStatus == 1" @click="handleCancelLikeOrHate(-1,detailItem.userId,1,detailIndex,detailItem.operateStatus,'second')"><img :src="likePic" alt="赞同">{{detailItem.likeNum | likeNum}}</span>
+                                                <span v-if="detailItem.operateStatus == 1" @click="handleCancelLikeOrHate(-1,detailItem.userId,1,detailIndex,detailItem.operateStatus)"><img :src="unLikeActivePic" alt="不同意">{{detailItem.unlikeNum | likeNum}}</span>
+                                            </p>
                                             <p class="experienceDetail-time">{{detailItem.createTime | dateFormat}}</p>
                                         </div>
                                     </div>
@@ -311,12 +321,23 @@ export default {
             let res = await likeOrHate(operateType, targetId, targetType)
             if(res.status === 200){
                 showSuccess('')
-                this.List[index].operateStatus = operateType
-                if(operateType == 0){
-                    this.List[index].likeNum += 1
+
+                if(targetType == 0){
+                    this.List[index].operateStatus = operateType
+                    if(operateType == 0){
+                        this.List[index].likeNum += 1
+                    }else{
+                        this.List[index].unlikeNum += 1
+                    }
                 }else{
-                    this.List[index].unlikeNum += 1
+                    this.detailData['result'] && (this.detailData['result'][index].operateStatus = operateType)
+                    if(operateType == 0){
+                        this.detailData['result'] && (this.detailData['result'][index].likeNum += 1)
+                    }else{
+                        this.detailData['result'] && (this.detailData['result'][index].unlikeNum += 1)
+                    }
                 }
+                
             }else{
                 showError(res.msg||res.error)
             }
@@ -331,13 +352,26 @@ export default {
             let res = await likeOrHate(operateType, targetId, targetType)
             if(res.status === 200){
                 showSuccess('')
-                if(operateStatus == 0){
+                if(targetType == 0){
+                    if(operateStatus == 0){
                         this.List[index].likeNum -= 1
                     }else{
                         this.List[index].unlikeNum -= 1
                     }
+                }else{
+                    if(operateStatus == 0){
+                        this.detailData['result'] && (this.detailData['result'][index].likeNum -= 1)
+                    }else{
+                        this.detailData['result'] && (this.detailData['result'][index].unlikeNum -= 1)
+                    }
+                }
+                
                 if(flag == 'first'){
-                    this.List[index].operateStatus = null
+                    if(operateStatus == 0){
+                        this.List[index].operateStatus = null
+                    }else{
+                        this.detailData['result'] && (this.detailData['result'][index].operateStatus = null)
+                    }
                 }else{
                     let tempStatus = operateStatus == 1 ? 0 : 1
                     this.handleLikeOrHate(tempStatus, targetId, targetType, index, null, flag)
@@ -457,8 +491,8 @@ export default {
 
 .experienceDetail-content{
     width: 100%;
-     margin-top: 45px;
-    height: 100vh;
+    margin-top: 45px;
+    height: calc(95vh - 50px);;
     background-color: #FFFFFF;
     border-radius: 20px 20px 0;
 }
@@ -478,12 +512,12 @@ export default {
     height: 25px;
 }
 
-.experienceDetail-response-item:not(:last-child){
+.experienceDetail-response-item{
     border-bottom: 1px solid #ebebeb;
 }
-.experienceDetail-response-item:last-child{
+/* .experienceDetail-response-item:last-child{
     padding-bottom: 120px;
-}
+} */
 .experienceDetail-item{
     border: unset;
     /* margin-top: 45px; */
