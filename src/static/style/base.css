@@ -111,7 +111,9 @@ button {
 
 
 /* mint */
-
+.mint-tabbar > .mint-tab-item.is-selected{
+    color: #5fbdc4 !important;
+}
 .popup-diy-title{
     text-align: center;
     font-size: 2rem;

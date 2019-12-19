@@ -88,11 +88,11 @@ export default {
     emptyPic: require('@/assets/emptyPic.png'),
     userName:'用户名',
     isLogin:false,
-    token:this.$store.state.token
+    token:this.$store.state.token,
+    reloadFlag:false
     }
   },
   created() {
-console.log('this',this)
    
   },
   mounted () {
@@ -103,7 +103,6 @@ console.log('this',this)
   methods:{
     cancelCheckList(){
         this.checkListVisible = false
-
     },
     showCheck(){
         if(this.isLogin){
@@ -155,6 +154,7 @@ console.log('this',this)
         }
     },
     async handleGetUserMsg(){
+        console.log('reloadFlag',this.reloadFlag)
         Indicator.open();
         try {
             let res = await getUserMsg()
@@ -163,6 +163,9 @@ console.log('this',this)
                 this.userPic = res.headImage
                 this.isLogin = true
                 showSuccess('')
+                if(this.reloadFlag){
+                    window.location.reload()
+                }
             }else{
                 showError(res.msg||res.error)
             }
@@ -171,7 +174,6 @@ console.log('this',this)
         }
     },
     async handleUpdateUserPic(file){
-        console.log('file',file)
         Indicator.open();
         try {
             let res = await updateUserPic(file)
@@ -192,10 +194,30 @@ console.log('this',this)
         }
     },
 
+  },
+  beforeRouteEnter (to, from, next) {
+    console.log('from',from)
+    if(from.name == 'login'){
+        next(vm=>(vm.reloadFlag = true))
+    }else{
+        next(vm=>(vm.reloadFlag = false))
+    }
   }
+
 }
 </script>
+<style>
+    .check-complete{
+    color: #b3e19d !important;
+}
+.check-reject{
+    color: #fab6b6;
+}
+.check-wait{
+    color: #c8c9cc;
+}
 
+</style>
 <style scoped>
 .user-user{
     display: flex;
@@ -241,15 +263,6 @@ console.log('this',this)
     margin-left: 10px;
     width: 25px;
     height: 25px;
-}
-.check-complete{
-    color: #b3e19d;
-}
-.check-reject{
-    color: #fab6b6;
-}
-.check-wait{
-    color: #c8c9cc;
 }
 
 .checkList-content{

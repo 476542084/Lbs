@@ -55,7 +55,7 @@ export default {
                 sessionStorage.setItem('token',res.token);
                 this.$store.commit('set_userInfo', res.user)
                 sessionStorage.setItem('userInfo',JSON.stringify(res.user));
-                this.$router.push({path:'/home'})
+                this.$router.push({path:'/user'})
             }else{
                 showError(res.msg||res.error)
             }

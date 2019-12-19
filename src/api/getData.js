@@ -2,12 +2,13 @@ import fetch from './fetch'
 import store from '@/store'
 import {baseUrl} from '../../vue.config'
 const url = baseUrl == '/' ? '/api' : baseUrl
+const mapUrl = baseUrl == '/' ? '/amap' : 'https://restapi.amap.com/v3/geocode/regeo'
 
 
 //高德地图
 
 //逆地理编码--done
-export const getAmapAddress = (lat, lng) => fetch('/amap', {
+export const getAmapAddress = (lat, lng) => fetch(mapUrl, {
     // output:'xml',
     location:`${lng},${lat}`,
     key:'a6d2df7f27a6e3a5cc28e376062e5bf6',
@@ -16,7 +17,6 @@ export const getAmapAddress = (lat, lng) => fetch('/amap', {
     batch:false,
     roadlevel:0
 })
-
 
 //用户接口
 
@@ -49,7 +49,7 @@ export const cancelAttention = (cancelId, userId = store.state.userInfo.userId) 
 }, 'POST')
 
 //管理员
-//获取统计数据
+//获取统计数据--done
 //统计数据，status 状态区分，推广信息传1，心得交流传0，标注传-1
 export const getCountData = (startTime,endTime,status,userId = store.state.userInfo.userId) => fetch(url + '/admin/countData', {
     endTime,
@@ -159,11 +159,11 @@ export const findExperienceList = (selectedUserId,userId = store.state.userInfo.
     userId
 }, 'POST')
 
-//点赞心得
-export const likeExperience = (commId,likeFlag,unlikeFlag,userId = store.state.userInfo.userId) => fetch(url + '/experience/likeExperience', {
-    commId,
-    likeFlag,
-    unlikeFlag,
+//点赞心得--done
+export const likeOrHate = (operateType, targetId, targetType, userId = store.state.userInfo.userId) => fetch(url + '/experience/likeOrHate', {
+    operateType,
+    targetId,
+    targetType,
     userId
 }, 'POST')
 

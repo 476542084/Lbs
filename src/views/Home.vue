@@ -7,7 +7,8 @@
     <div >
         <div v-if="token == ''" class="empty-div">
             <p><img :src="emptyPic" alt=""></p>
-            <p>请登录！</p>
+            <p>请先登录！</p>
+            <mt-button type="primary" @click.native="handleLogin">登录</mt-button>
         </div>
         <div v-if="token != ''" class="home" >
             <div class="center-icon">
@@ -30,7 +31,7 @@
                     </div>
                 </div>
             </mt-popup>
-            <div id="container" style="width:100%;height:600px">
+            <div id="container" style="width:100%;height:100vh">
             </div>
         </div>
     </div>
@@ -84,33 +85,27 @@ export default {
     if(this.token == ''){
         return
     }
-      this.map = new AMap.Map('container', {
-        resizeEnable: true,
-        zoom: 8
-      })  
-      //缩放
-      this.map.addControl(new AMap.ToolBar({
-        // 简易缩放模式，默认为 false
-        liteStyle: true
-      }));
+    this.map = new AMap.Map('container', {
+      resizeEnable: true,
+      zoom: 8
+    })  
+    //缩放
+    this.map.addControl(new AMap.ToolBar({
+      // 简易缩放模式，默认为 false
+      liteStyle: true
+    }));
 
 
-    this.init()
-    if(this.token != ''){
-    document.querySelector('#container').style.height = (document.documentElement.clientHeight || document.body.clientHeight) + 'px'
-
-    }
 
     //获取所有标注信息
     if(this.token !== ''){
-          this.handleGetMobileHome()
+      document.querySelector('#container').style.height = (document.documentElement.clientHeight || document.body.clientHeight) + 'px'
+
+       this.init()
+       this.handleGetMobileHome()
     }
 
     console.log('this.$store',this.$store)
-    //获取头像
-    // if(this.$store.state.userInfo.headImage && this.$store.state.userInfo.headImage !== null){
-    //   this.userPic = this.$store.state.userInfo.headImage
-    // }
     
   },
   methods:{
@@ -440,7 +435,9 @@ export default {
             showError('网络错误，请稍后重试！')
             }
     },
-
+    handleLogin(){
+        this.$router.push({path:'/login'})
+    },
     //定位事件
     showPosition(position){
       console.log('position',position)
@@ -524,10 +521,10 @@ export default {
   height: 3rem;
   border-radius: 50%;
 }
-html, body, #container {
-              height: 100%;
+/* html, body{
+              height: 100vh;
               width: 100%;
-          }
+          } */
 
         .content-window-card {
             position: relative;

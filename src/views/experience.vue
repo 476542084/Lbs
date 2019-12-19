@@ -11,7 +11,7 @@
             <div v-if="showPostExperience" class="experience-post" @click="handlePostExperience">
                 <img :src="postExperience" alt="发表心得">
             </div>
-            <div class="experience-item" v-for="(item,index) in List" :key="index" @click="handleGetExperienceDetail(item)">
+            <div class="experience-item" v-for="(item,index) in List" :key="index" >
                 <div class="experience-img">
                     <img :src="item.headImage == null ? defaultPic : item.headImage" alt="头像">
                     <div style="display: flex;
@@ -23,12 +23,18 @@
                     </div>
                 </div>
                 <div class="experience-detail">
-                    <div class="experience-detail-div">
+                    <div class="experience-detail-div" @click="handleGetExperienceDetail(item)">
                         <p class="experience-detail-content">{{item.content}}</p>
                     </div>
                     <p class="experience-handleLike" >
-                        <span><img :src="likePic" alt="赞同">{{item.likeNum | likeNum}}</span>
-                        <span><img :src="unLikePic" alt="不同意">{{item.unlikeNum | likeNum}}</span>
+                        <span v-if="item.operateStatus == null" @click="handleLikeOrHate(0,item.commId,0,index,item.operateStatus)"><img :src="likePic" alt="赞同">{{item.likeNum | likeNum}}</span>
+                        <span v-if="item.operateStatus == null" @click="handleLikeOrHate(1,item.commId,0,index,item.operateStatus)"><img :src="unLikePic" alt="不同意">{{item.unlikeNum | likeNum}}</span>
+
+                        <span v-if="item.operateStatus == 0" @click="handleCancelLikeOrHate(-1,item.commId,0,index,item.operateStatus)"><img :src="likeActivePic" alt="赞同">{{item.likeNum | likeNum}}</span>
+                        <span v-if="item.operateStatus == 0" @click="handleCancelLikeOrHate(-1,item.commId,0,index,item.operateStatus,'second')"><img :src="unLikePic" alt="不同意">{{item.unlikeNum | likeNum}}</span>
+
+                        <span v-if="item.operateStatus == 1" @click="handleCancelLikeOrHate(-1,item.commId,0,index,item.operateStatus,'second')"><img :src="likePic" alt="赞同">{{item.likeNum | likeNum}}</span>
+                        <span v-if="item.operateStatus == 1" @click="handleCancelLikeOrHate(-1,item.commId,0,index,item.operateStatus)"><img :src="unLikeActivePic" alt="不同意">{{item.unlikeNum | likeNum}}</span>
                     </p>
                 </div>
             </div>
@@ -130,8 +136,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="experienceDetail-response-icon" @click="handleResponseText">
-                    <img :src="responsePic" alt="回复心得">
+                <div class="experienceDetail-response-icon"  @click="handleResponseText">
+                    <img style="width:35px;height:35px;" :src="responsePic" alt="回复心得">
                 </div>
             </div>
         </mt-popup>
@@ -141,7 +147,7 @@
 
 <script>
 
-import {getExperienceHome,getExperienceDetail,postExperience,replyExperience,getAttentionMsgList} from '@/api/getData'
+import {getExperienceHome,getExperienceDetail,postExperience,replyExperience,likeOrHate} from '@/api/getData'
 import { async } from 'q'
 import { Cell,Indicator,MessageBox} from 'mint-ui';
 import moment from 'moment'
@@ -168,7 +174,9 @@ export default {
         clickPic: require('@/assets/clickPic.png'),
         emptyPic: require('@/assets/emptyPic.png'),
         likePic:require('@/assets/likePic.png'),
+        likeActivePic:require('@/assets/likeActivePic.png'),
         unLikePic:require('@/assets/unLikePic.png'),
+        unLikeActivePic:require('@/assets/unLikeActivePic.png'),
         postExperience:require('@/assets/postExperience.png'),
         responsePic:require('@/assets/responsePic.png'),
         token:''
@@ -262,7 +270,6 @@ export default {
     },
     //获取心得列表
     async handleGetExperienceHome(){
-        let res = await getAttentionMsgList()
         Indicator.open();
         try {
             let res = await getExperienceHome()
@@ -297,6 +304,51 @@ export default {
              showError('网络错误，请稍后重试！')
         }
     },
+    // 点赞/踩
+    async handleLikeOrHate(operateType, targetId, targetType, index, operateStatus, flag = 'first'){
+        Indicator.open();
+        try {
+            let res = await likeOrHate(operateType, targetId, targetType)
+            if(res.status === 200){
+                showSuccess('')
+                this.List[index].operateStatus = operateType
+                if(operateType == 0){
+                    this.List[index].likeNum += 1
+                }else{
+                    this.List[index].unlikeNum += 1
+                }
+            }else{
+                showError(res.msg||res.error)
+            }
+        } catch (error) {
+             showError('网络错误，请稍后重试！')
+        }
+    },
+    //取消点赞/踩
+    async handleCancelLikeOrHate(operateType, targetId, targetType, index, operateStatus, flag = 'first'){
+        Indicator.open();
+        try {
+            let res = await likeOrHate(operateType, targetId, targetType)
+            if(res.status === 200){
+                showSuccess('')
+                if(operateStatus == 0){
+                        this.List[index].likeNum -= 1
+                    }else{
+                        this.List[index].unlikeNum -= 1
+                    }
+                if(flag == 'first'){
+                    this.List[index].operateStatus = null
+                }else{
+                    let tempStatus = operateStatus == 1 ? 0 : 1
+                    this.handleLikeOrHate(tempStatus, targetId, targetType, index, null, flag)
+                }
+            }else{
+                showError(res.msg||res.error)
+            }
+        } catch (error) {
+             showError('网络错误，请稍后重试！')
+        }
+    }
   }
 }
 </script>
