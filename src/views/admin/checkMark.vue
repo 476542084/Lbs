@@ -68,7 +68,7 @@ export default {
         clickPic: require('@/assets/clickPic.png'),
         userPic:require('@/assets/defaultPic.png'),
         tableData: [],
-        selectUser:this.userList[0].userId
+        selectUser:this.userList[2].userId
     }
   },
   created(){
@@ -76,7 +76,7 @@ export default {
   },
   mounted(){
       this.loading = true
-      let selectId = this.userList[0] && (this.userList[0].userId)
+      let selectId = this.userList[2] && (this.userList[2].userId)
       this.handleFindMarkList(selectId)
   },
   methods:{
