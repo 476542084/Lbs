@@ -22,8 +22,8 @@ const Login_PC = ()=> import('./views/admin/login.vue')
 const routes_mobile = [
     {
         path: '*',
-        redirect: '/home',
-        component: Home 
+        redirect: '/user',
+        component: User 
     },
     {
         path:'/home',
@@ -44,6 +44,11 @@ const routes_mobile = [
         path:'/login',
         name:'login',
         component: Login 
+    },
+    {
+        path: '/',
+        redirect: '/user',
+        component: User 
     },
     {
         path:'/user',

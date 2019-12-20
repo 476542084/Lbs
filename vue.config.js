@@ -7,7 +7,9 @@ module.exports = {
     baseUrl: process.env.NODE_ENV === 'production'
     ? 'http://47.102.134.4:1111'
     : '/',
-    publicPath: './',
+    publicPath: process.env.NODE_ENV === 'production'
+    ? './static'
+    : './',
     outputDir: 'dist', //打包输出目录默认dist
 
     //默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。你可以通过将这个选项设为 false 来关闭文件名哈希。(false的时候就是让原来的文件名不改变)
@@ -51,7 +53,7 @@ module.exports = {
                 }
             },
             "/amap": {
-                target: "https://restapi.amap.com/v3/geocode/regeo",
+                target: "http://restapi.amap.com/v3/geocode/regeo",
                 ws:false,
                 secure: true,
                 changeOrigin: true,
