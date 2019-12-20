@@ -1,6 +1,6 @@
 <template>
     <div class="detail-container">
-        <h2 style="padding: 10px;">推广统计</h2>
+        <h2 style="padding: 10px;">推广通过统计</h2>
         <div class="block">
             <span style="color:#909399;padding:0 10px 0">请选择时间:</span>
             <el-date-picker
@@ -144,7 +144,7 @@ export default {
             },
             series: [{
                 data: total,
-                name:'标注数量',
+                name:'推广通过数量',
                 type: 'line',
                 smooth: true
             }]

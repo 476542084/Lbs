@@ -9,6 +9,11 @@
             <mt-field label="账号" placeholder="请输入账号"  v-model="userName"></mt-field>
             <mt-field label="密码" placeholder="请输入密码" type="password" v-model="password"></mt-field>
         </div>
+
+        <div style="padding: 12px;">
+            <SliderVerificationCode height="35px" sliderWidth="70px"  inactiveValue=false activeValue=true content="请滑动通过验证"  v-model="code"/>
+        </div>
+
         <div class="button-div">
             <mt-button type="primary" @click.native="handleLogin">登录</mt-button>
             <mt-button class="register" plain @click.native="handleRegister">注册</mt-button>
@@ -29,6 +34,7 @@ export default {
   components: {Field,LbsNav,Header},
   data(){
     return{
+      code:false,
       userName:'',
       password:''
     }
@@ -45,11 +51,14 @@ export default {
             showError('请填写完整!')
             return
         }
+        if(this.code == false){
+            showError('请滑动验证!')
+            return
+        }
         Indicator.open();
         try {
             let res = await login(this.userName,this.password)
             if(res.status === 200){
-                console.log('res',res)
                 showSuccess('登录成功')
                 this.$store.commit('set_token', res.token)
                 sessionStorage.setItem('token',res.token);
@@ -81,7 +90,7 @@ export default {
     margin-top: 15px;
 }
 .container{
-   padding-top: 4rem;
+   padding-top: 2rem;
 }
 .title{
     text-align: center;

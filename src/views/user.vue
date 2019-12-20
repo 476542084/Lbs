@@ -154,7 +154,6 @@ export default {
         }
     },
     async handleGetUserMsg(){
-        console.log('reloadFlag',this.reloadFlag)
         Indicator.open();
         try {
             let res = await getUserMsg()
@@ -196,7 +195,6 @@ export default {
 
   },
   beforeRouteEnter (to, from, next) {
-    console.log('from',from)
     if(from.name == 'login'){
         next(vm=>(vm.reloadFlag = true))
     }else{

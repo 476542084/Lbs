@@ -95,8 +95,6 @@ export default {
       liteStyle: true
     }));
 
-
-
     //获取所有标注信息
     if(this.token !== ''){
       document.querySelector('#container').style.height = (document.documentElement.clientHeight || document.body.clientHeight) + 'px'
@@ -104,9 +102,6 @@ export default {
        this.init()
        this.handleGetMobileHome()
     }
-
-    console.log('this.$store',this.$store)
-    
   },
   methods:{
     async handleGetMobileHome(){
@@ -167,7 +162,6 @@ export default {
     },
     async actionAddMarker(){
         if(this.title.trim() == '' || this.content.trim() == ''){
-          console.log('error')
           showError('请填写完整！')
           return
         }
@@ -248,14 +242,11 @@ export default {
 
     },
     showLocationMsg(data){
-      console.log('data',data)
-     
       if(data.message == "Geolocation permission denied."){
          showError('定位失败，请允许')
         navigator.geolocation.getCurrentPosition(this.showPosition(),this.showError());
       }
       if(data.info == 'SUCCESS'){
-        console.log('position',data.position);
         showSuccess('')
       }
     },
@@ -285,7 +276,6 @@ export default {
     },
     mclick(e){
       this.e = e
-      console.log('ee',e)
       this.handleGetMarkDetail(e)
     },
 
@@ -440,11 +430,11 @@ export default {
     },
     //定位事件
     showPosition(position){
-      console.log('position',position)
+    //   console.log('position',position)
     },
 
     showError(error){
-      console.log('error',error)
+    //   console.log('error',error)
     }
   }
 }
@@ -512,9 +502,15 @@ export default {
   left: 50%;
   border-radius: 50%;
   box-shadow: 2px 3px 8px #888888;
+  display: flex;
+  width: 60px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
 }
 .add-icon img{
-  width: 60px;
+  width: 50px;
+  height: 50px;
 }
 .index-headImg{
   width: 3rem;

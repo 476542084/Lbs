@@ -25,7 +25,7 @@
         
         <div v-if="emptyShow" class="empty-div">
             <p><img :src="emptyPic" alt="空白"></p>
-            <p>时间段没有心得信息！</p>
+            <p>该时间段没有心得信息！</p>
         </div>
 
     </div> 
@@ -145,7 +145,7 @@ export default {
             },
             series: [{
                 data: total,
-                name:'标注数量',
+                name:'心得数量',
                 type: 'line',
                 smooth: true
             }]

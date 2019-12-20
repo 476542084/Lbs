@@ -13,6 +13,7 @@
     "element-ui": "^2.6.3",
     "mint-ui": "^2.2.13",
     "moment": "^2.24.0",
+    "slider-verification-code": "^1.0.3",
     "vant": "^2.2.16",
     "vue": "^2.6.10",
     "vue-resource": "^1.5.1",

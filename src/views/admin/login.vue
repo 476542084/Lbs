@@ -1,26 +1,34 @@
 <template>
   <div class="pc-login">
     <el-form ref="loginForm" :model="form" :rules="rules" label-width="80px" class="login-box">
-      <h3 class="login-title">欢迎登录</h3>
+      <h3 class="login-title">基于LBS的社交网络平台</h3>
       <el-form-item label="账号" prop="username" style=" color: #fff">
         <el-input type="text" placeholder="请输入账号" v-model="form.username"/>
       </el-form-item>
+
       <el-form-item label="密码" prop="password">
         <el-input type="password" placeholder="请输入密码" v-model="form.password"/>
       </el-form-item>
+      <div style="margin: 20px 0px;margin-left: 55px;">
+        <SliderVerificationCode height="30px" sliderWidth="45px"  inactiveValue=false activeValue=true content="请滑动通过验证"  v-model="code"/>
+      </div>
       <el-form-item>
         <el-button type="primary" @click="onSubmit('loginForm')">登录</el-button>
       </el-form-item>
     </el-form>
+     
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
+
 import {login} from '@/api/getData'
   export default {
     name: "Login",
     data() {
       return {
+        code:false,
         form: {
           username: '',
           password: ''
@@ -44,13 +52,19 @@ import {login} from '@/api/getData'
         // 为表单绑定验证功能
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.handleLogin()
+               if(this.code == false){
+                this.$message.error('请滑动验证');
+                    return false
+                }else{
+                    this.handleLogin()
+                }
           } else {
             return false;
           }
         });
       },
       async handleLogin(){
+        
         try {
             let res = await login(this.form.username,this.form.password)
             if(res.status === 200){
@@ -72,6 +86,12 @@ import {login} from '@/api/getData'
 <style >
   .el-form-item__label{
      color: #fff ;
+     text-align: left;
+     width: auto !important;
+     
+  }
+  .el-form-item__content{
+margin-left: 55px !important;
   }
 </style>
 <style scoped>

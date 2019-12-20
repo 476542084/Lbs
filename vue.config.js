@@ -33,15 +33,13 @@ module.exports = {
     chainWebpack: config => {
         config.resolve.alias
             .set("@", resolve("src"))
-            // .set("utils", resolve("src/utils"));
     },
     // 它支持webPack-dev-server的所有选项
     devServer: {
-        host: "192.168.1.5",
+        host: "192.168.3.51",
         port: 8080, // 端口号
         https: true, // https:{type:Boolean}
         open: false, //配置自动启动浏览器
-        // proxy: 'http://47.102.134.4:1111/' // 配置跨域处理,只有一个代理
         proxy: {
             "/api": {
                 target: "http://47.102.134.4:1111",

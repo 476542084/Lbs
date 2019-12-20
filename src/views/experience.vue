@@ -129,14 +129,14 @@
                                         </div>
                                         <div>
                                             <p class="experience-handleLike" >
-                                                <span v-if="detailItem.operateStatus == null" @click="handleLikeOrHate(0,detailItem.userId,1,detailIndex,detailItem.operateStatus)"><img :src="likePic" alt="赞同">{{detailItem.likeNum | likeNum}}</span>
-                                                <span v-if="detailItem.operateStatus == null" @click="handleLikeOrHate(1,detailItem.userId,1,detailIndex,detailItem.operateStatus)"><img :src="unLikePic" alt="不同意">{{detailItem.unlikeNum | likeNum}}</span>
+                                                <span v-if="detailItem.operateStatus == null" @click="handleLikeOrHate(0,detailItem.replyId,1,detailIndex,detailItem.operateStatus)"><img :src="likePic" alt="赞同">{{detailItem.likeNum | likeNum}}</span>
+                                                <span v-if="detailItem.operateStatus == null" @click="handleLikeOrHate(1,detailItem.replyId,1,detailIndex,detailItem.operateStatus)"><img :src="unLikePic" alt="不同意">{{detailItem.unlikeNum | likeNum}}</span>
 
-                                                <span v-if="detailItem.operateStatus == 0" @click="handleCancelLikeOrHate(-1,detailItem.userId,1,detailIndex,detailItem.operateStatus)"><img :src="likeActivePic" alt="赞同">{{detailItem.likeNum | likeNum}}</span>
-                                                <span v-if="detailItem.operateStatus == 0" @click="handleCancelLikeOrHate(-1,detailItem.userId,1,detailIndex,detailItem.operateStatus,'second')"><img :src="unLikePic" alt="不同意">{{detailItem.unlikeNum | likeNum}}</span>
+                                                <span v-if="detailItem.operateStatus == 0" @click="handleCancelLikeOrHate(-1,detailItem.replyId,1,detailIndex,detailItem.operateStatus)"><img :src="likeActivePic" alt="赞同">{{detailItem.likeNum | likeNum}}</span>
+                                                <span v-if="detailItem.operateStatus == 0" @click="handleCancelLikeOrHate(-1,detailItem.replyId,1,detailIndex,detailItem.operateStatus,'second')"><img :src="unLikePic" alt="不同意">{{detailItem.unlikeNum | likeNum}}</span>
 
-                                                <span v-if="detailItem.operateStatus == 1" @click="handleCancelLikeOrHate(-1,detailItem.userId,1,detailIndex,detailItem.operateStatus,'second')"><img :src="likePic" alt="赞同">{{detailItem.likeNum | likeNum}}</span>
-                                                <span v-if="detailItem.operateStatus == 1" @click="handleCancelLikeOrHate(-1,detailItem.userId,1,detailIndex,detailItem.operateStatus)"><img :src="unLikeActivePic" alt="不同意">{{detailItem.unlikeNum | likeNum}}</span>
+                                                <span v-if="detailItem.operateStatus == 1" @click="handleCancelLikeOrHate(-1,detailItem.replyId,1,detailIndex,detailItem.operateStatus,'second')"><img :src="likePic" alt="赞同">{{detailItem.likeNum | likeNum}}</span>
+                                                <span v-if="detailItem.operateStatus == 1" @click="handleCancelLikeOrHate(-1,detailItem.replyId,1,detailIndex,detailItem.operateStatus)"><img :src="unLikeActivePic" alt="不同意">{{detailItem.unlikeNum | likeNum}}</span>
                                             </p>
                                             <p class="experienceDetail-time">{{detailItem.createTime | dateFormat}}</p>
                                         </div>

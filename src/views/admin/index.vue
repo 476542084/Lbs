@@ -1,7 +1,7 @@
 <template>
     <div>
       <div class="index-header">
-          <span>基于LBS的在线社交系统-后台管理</span>
+          <span>基于LBS的社交网络平台-后台管理</span>
           <div>
             <img  class="user-userPic" :src=userPic alt="头像">
             <el-dropdown style="    cursor: pointer; color:#fff">

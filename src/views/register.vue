@@ -12,6 +12,11 @@
             <mt-field label="用户名" placeholder="请输入用户名"  :attr="{ maxlength: 10 }" v-model="name"></mt-field>
 
         </div>
+
+        <div style="padding: 12px;">
+            <SliderVerificationCode height="35px" sliderWidth="70px"  inactiveValue=false activeValue=true content="请滑动通过验证"  v-model="code"/>
+        </div>
+
         <div class="button-div">
             <mt-button type="primary" @click.native="handleRegister">注册</mt-button>
             <mt-button class="register" @click.native="handleBack" plain>返回登录</mt-button>
@@ -32,6 +37,7 @@ export default {
   components: {Field,LbsNav,Header},
   data(){
     return{
+      code:false,
       userName:'',
       password:'',
       password2:'',
@@ -52,6 +58,10 @@ export default {
         }
         if(this.password.trim() !== this.password2.trim()){
             showError('两次密码不同！')
+            return
+        }
+        if(this.code == false){
+            showError('请滑动验证!')
             return
         }
         Indicator.open();
@@ -84,7 +94,7 @@ export default {
     margin-top: 15px;
 }
 .container{
-   padding-top: 4rem;
+   padding-top: 2rem;
 }
 .title{
     text-align: center;

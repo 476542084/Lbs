@@ -55,25 +55,16 @@ export default {
     }
   },
   created() {
-    //   console.log('markList',this.markList)
       this.token = this.$store.state.token
-    //   Indicator.open();
       if(this.markList != undefined){
-            // this.List = this.markList
-      console.log('markList111',this.markList)
-
-            showSuccess('')
-                let data = []
-                 this.markList.map((item) => {
-                    item.showAddress = ''
-                    data.push({...item})
-                })
-                this.List = data
-
-
+        showSuccess('')
+        let data = []
+        this.markList.map((item) => {
+            item.showAddress = ''
+            data.push({...item})
+        })
+        this.List = data
       }else{
-      console.log('markList222',this.markList)
-
         if(this.token != ''){
             this.handleGetUserMsg()
         }
