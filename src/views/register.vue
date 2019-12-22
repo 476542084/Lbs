@@ -14,7 +14,7 @@
         </div>
 
         <div style="padding: 12px;">
-            <SliderVerificationCode height="35px" sliderWidth="70px"  inactiveValue=false activeValue=true content="请滑动通过验证"  v-model="code"/>
+            <SliderVerificationCode height="40px" sliderWidth="100px"  inactiveValue=false activeValue=true content="请滑动通过验证"  v-model="code"/>
         </div>
 
         <div class="button-div">

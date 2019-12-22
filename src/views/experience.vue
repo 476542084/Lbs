@@ -110,7 +110,7 @@
                                 <p class="experience-handleLike experienceDetail-handleLike" >
                                     <span>{{detailData.likeNum | likeNum}}&#32;赞同</span><span>·</span>
                                     <span>{{detailData.unlikeNum | likeNum}}&#32;反对</span><span>·</span>
-                                    <span>{{(detailData.result && detailData.result.length) | likeNum}}&#32;评论</span>
+                                    <span>{{(detailData.count && detailData.count) | likeNum}}&#32;评论</span>
                                 </p>
                             </div>
                         </div>
@@ -201,7 +201,7 @@ export default {
         responsePic:require('@/assets/responsePic.png'),
         addUploadPic:require('@/assets/addUploadPic.png'),
         token:'',
-        addUploadFile:null
+        addUploadFile:null,
     }
   },
   created() {
@@ -235,12 +235,16 @@ export default {
   },
   methods:{
     handleCancelResponse(){
+        this.openTouch()
         this.responseVisible = false
     },
     handleResponseText(){
+        this.closeTouch()
+        this.responseText = ''
         this.responseVisible = true
     },
     cancelExperienceDetail(){
+        this.openTouch()
         this.detailVisible = false
     },
     handleCancel(){
@@ -255,6 +259,17 @@ export default {
 
         this.popupVisible = true
     },
+    
+    //禁止body滑动
+    closeTouch:function(){
+        document.getElementsByTagName("body")[0].addEventListener('touchmove',
+            this.handler,{passive:false});//阻止默认事件
+    },
+    //解除body滑动
+    openTouch:function(){
+        document.getElementsByTagName("body")[0].removeEventListener('touchmove',
+            this.handler,{passive:false});//打开默认事件
+    },
     //回复心得
     async actionResponse(){
         if(this.responseText.trim() == ''){
@@ -265,9 +280,18 @@ export default {
         try {
             let res = await replyExperience(this.tempCommData.commId,this.responseText)
             if(res.status === 200){
-                showSuccess('发表成功')
+                showSuccess('回复成功')
+                // 回复成功同步心得列表评论数
+                this.List.some((item,index) => {
+                    if(item.commId == this.tempCommData.commId){
+                        this.detailData.count += 1
+                        this.List[index].replyCount += 1
+                        return true
+                    }
+                })
+                this.openTouch()
                 this.responseVisible = false
-                this.handleGetExperienceDetail(this.tempCommData)
+                // this.handleGetExperienceDetail(this.tempCommData)
             }else{
                 showError(res.msg||res.error)
             }
@@ -309,7 +333,7 @@ export default {
         let beforeFile = e.currentTarget.files[0]
         this.addUploadPic = getObjectURL(beforeFile)
 
-        compressImage(beforeFile , 1200, 1200, 0.95).then(canvasToBlob).then((afterFile) => {
+        compressImage(beforeFile , 1600, 1600, 1).then(canvasToBlob).then((afterFile) => {
             this.addUploadFile = afterFile
         })  
     },
@@ -341,7 +365,14 @@ export default {
                 showSuccess('')
                 this.detailData = res
                 this.tempCommData = data
+                this.closeTouch()
                 this.detailVisible = true
+
+                //组件置顶
+                this.$nextTick(()=>{
+                    let ele = document.querySelectorAll('.experienceDetail-content')[1]
+                    ele.scrollTop = 0
+                })
             }else{
                 showError(res.msg||res.error)
             }
