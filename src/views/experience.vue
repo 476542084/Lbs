@@ -25,6 +25,7 @@
                 <div class="experience-detail">
                     <div class="experience-detail-div" @click="handleGetExperienceDetail(item)">
                         <p class="experience-detail-content">{{item.content}}</p>
+                        <img v-if="item.image != null" :src=item.image alt="心得图片缩略" class="experience-content-image-small">
                     </div>
                     <p class="experience-handleLike" >
                         <span v-if="item.operateStatus == null" @click="handleLikeOrHate(0,item.commId,0,index,item.operateStatus)"><img :src="likePic" alt="赞同">{{item.likeNum | likeNum}}</span>
@@ -35,10 +36,13 @@
 
                         <span v-if="item.operateStatus == 1" @click="handleCancelLikeOrHate(-1,item.commId,0,index,item.operateStatus,'second')"><img :src="likePic" alt="赞同">{{item.likeNum | likeNum}}</span>
                         <span v-if="item.operateStatus == 1" @click="handleCancelLikeOrHate(-1,item.commId,0,index,item.operateStatus)"><img :src="unLikeActivePic" alt="不同意">{{item.unlikeNum | likeNum}}</span>
+
+                        <span ><img :src="responseNumPic" alt="评论数">{{(item.replyCount == undefined ? 0 : item.replyCount) | likeNum}}</span>
                     </p>
                 </div>
             </div>
         </div>
+
         <!-- 发表心得 -->
         <mt-popup
                 v-model="popupVisible"
@@ -46,14 +50,18 @@
                 popup-transition="popup-fade">
                 <div>
                     <div class="popup-diy-title"><p>发表心得</p></div>
-                    <mt-field  placeholder="请输入标题" :attr="{ maxlength: 25 }" v-model="postTitle" style="font-weight:300"></mt-field>
-                    <mt-field  placeholder="请输入详细内容" :attr="{ maxlength: 500 }" type="textarea" rows="8" v-model="postContent"></mt-field>
+                    <mt-field  placeholder="请输入标题" :attr="{ maxlength: 25 }" v-model="postTitle" style="font-weight:300;"></mt-field>
+                    <mt-field  placeholder="请输入详细内容" :attr="{ maxlength: 500 }" type="textarea" style="border:1px solid #cccbcb" rows="8" v-model="postContent"></mt-field>
+                    <img :src="addUploadPic" class="addUploadPic" @click="uploadFile" alt="添加图片">
+                    <input type="file" style="display:none" ref="uploadFile" @change="getFile" accept="image/png,image/jpeg,image/jpg">
+
                     <div class="popup-button">
                         <mt-button  type="primary" @click.native="actionPostExperience">确定</mt-button>
                         <mt-button  plain @click.native="handleCancel">取消</mt-button>
                     </div>
                 </div>
         </mt-popup>
+
         <!-- 回复心得 -->
         <mt-popup
             v-model="responseVisible"
@@ -94,8 +102,9 @@
                                 </div>
                             </div>
                             <div class="experience-detail">
-                                <div class="experience-detail-div">
+                                <div class="experience-detail-div" style="text-align: center;">
                                     <p class="experience-detail-content experienceDetail-detail-content">{{detailData.content}}</p>
+                                    <img v-if="detailData.image != null" :src=detailData.image alt="心得图片" class="experience-content-image-large">
                                 </div>
                                 <p class="experienceDetail-time">{{detailData.createTime | dateFormat}}</p>
                                 <p class="experience-handleLike experienceDetail-handleLike" >
@@ -157,12 +166,12 @@
 
 <script>
 
-import {getExperienceHome,getExperienceDetail,postExperience,replyExperience,likeOrHate} from '@/api/getData'
+import {getExperienceHome,getExperienceDetail,postExperience,postExperienceWithPic,replyExperience,likeOrHate} from '@/api/getData'
 import { async } from 'q'
 import { Cell,Indicator,MessageBox} from 'mint-ui';
 import moment from 'moment'
 import LbsNav from '@/components/nav'
-import {showError,showSuccess,compressImage,canvasToBlob} from '@/utils/common'
+import {showError,showSuccess,compressImage,canvasToBlob,getObjectURL} from '@/utils/common'
 export default {
   name: 'Experience',
   components: {Cell,LbsNav},
@@ -187,9 +196,12 @@ export default {
         likeActivePic:require('@/assets/likeActivePic.png'),
         unLikePic:require('@/assets/unLikePic.png'),
         unLikeActivePic:require('@/assets/unLikeActivePic.png'),
+        responseNumPic:require('@/assets/responseNumPic.png'),
         postExperience:require('@/assets/postExperience.png'),
         responsePic:require('@/assets/responsePic.png'),
-        token:''
+        addUploadPic:require('@/assets/addUploadPic.png'),
+        token:'',
+        addUploadFile:null
     }
   },
   created() {
@@ -236,6 +248,11 @@ export default {
     },
     //触发发表心得
     handlePostExperience(){
+        this.postTitle = ''
+        this.postContent = ''
+        this.addUploadFile = null
+        this.addUploadPic = require('@/assets/addUploadPic.png')
+
         this.popupVisible = true
     },
     //回复心得
@@ -265,8 +282,14 @@ export default {
           return
         }
         Indicator.open();
+
         try {
-            let res = await postExperience(this.postTitle, this.postContent)
+            let res = null
+            if(this.addUploadFile != null){
+                res = await postExperienceWithPic(this.postTitle, this.postContent,this.addUploadFile)
+            }else{
+                res = await postExperience(this.postTitle, this.postContent)
+            }
             if(res.status === 200){
                 showSuccess('发表成功')
                 this.popupVisible = false
@@ -277,6 +300,18 @@ export default {
         } catch (error) {
              showError('网络错误，请稍后重试！')
         }
+    },
+    //
+    uploadFile(){
+        this.$refs.uploadFile.dispatchEvent(new MouseEvent('click')) 
+    },
+    getFile(e){
+        let beforeFile = e.currentTarget.files[0]
+        this.addUploadPic = getObjectURL(beforeFile)
+
+        compressImage(beforeFile , 1200, 1200, 0.95).then(canvasToBlob).then((afterFile) => {
+            this.addUploadFile = afterFile
+        })  
     },
     //获取心得列表
     async handleGetExperienceHome(){
@@ -321,7 +356,7 @@ export default {
             let res = await likeOrHate(operateType, targetId, targetType)
             if(res.status === 200){
                 showSuccess('')
-
+                // debugger;
                 if(targetType == 0){
                     this.List[index].operateStatus = operateType
                     if(operateType == 0){
@@ -352,6 +387,7 @@ export default {
             let res = await likeOrHate(operateType, targetId, targetType)
             if(res.status === 200){
                 showSuccess('')
+                // debugger;
                 if(targetType == 0){
                     if(operateStatus == 0){
                         this.List[index].likeNum -= 1
@@ -367,7 +403,7 @@ export default {
                 }
                 
                 if(flag == 'first'){
-                    if(operateStatus == 0){
+                    if(targetType == 0){
                         this.List[index].operateStatus = null
                     }else{
                         this.detailData['result'] && (this.detailData['result'][index].operateStatus = null)
@@ -425,12 +461,16 @@ export default {
     display: flex;
     border-bottom: 1px solid #eae4e4;
 }
-.experience-img>img{
+.experience-img>img,.addUploadPic{
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin: 10px;
     box-shadow: 2px 3px 8px #888888;
+}
+.addUploadPic{
+    border-radius: unset;
+    box-shadow: unset;
 }
 
 
@@ -462,6 +502,15 @@ export default {
      -webkit-line-clamp: 4;
 
       -webkit-box-orient: vertical; 
+}
+.experience-content-image-small{
+    max-width: 80px;
+    max-height: 80px;
+    margin-top: 10px;
+}
+.experience-content-image-large{
+    max-width: 90vw;
+    margin-top: 10px;
 }
 .experience-handleLike{
     font-size: 15px;

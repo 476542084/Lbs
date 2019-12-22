@@ -2,7 +2,7 @@ import fetch from './fetch'
 import store from '@/store'
 import {baseUrl} from '../../vue.config'
 const url = baseUrl == '/' ? '/api' : baseUrl
-const mapUrl = baseUrl == '/' ? '/amap' : 'http://restapi.amap.com/v3/geocode/regeo'
+const mapUrl = baseUrl == '/' ? '/amap' : 'https://restapi.amap.com/v3/geocode/regeo'
 
 
 //高德地图
@@ -167,12 +167,20 @@ export const likeOrHate = (operateType, targetId, targetType, userId = store.sta
     userId
 }, 'POST')
 
-//发布心得--done
+//发布心得--无图文--done
 export const postExperience = (title,content,userId = store.state.userInfo.userId) => fetch(url + '/experience/postExperience', {
     content,
     title,
     userId
 }, 'POST')
+
+//发布心得--有图文--done
+export const postExperienceWithPic = (title,content,file,userId = store.state.userInfo.userId) => fetch(url + '/experience/postExperience', {
+    content,
+    title,
+    file,
+    userId
+}, 'POST',true)
 
 //回复心得--done
 export const replyExperience = (commId,content,userId = store.state.userInfo.userId) => fetch(url + '/experience/replyExperience', {

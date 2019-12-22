@@ -38,9 +38,9 @@ module.exports = {
     },
     // 它支持webPack-dev-server的所有选项
     devServer: {
-        host: "192.168.3.51",
+        host: "192.168.1.5",
         port: 8080, // 端口号
-        https: true, // https:{type:Boolean}
+        https: false, // https:{type:Boolean}
         open: false, //配置自动启动浏览器
         proxy: {
             "/api": {
@@ -53,7 +53,7 @@ module.exports = {
                 }
             },
             "/amap": {
-                target: "http://restapi.amap.com/v3/geocode/regeo",
+                target: "https://restapi.amap.com/v3/geocode/regeo",
                 ws:false,
                 secure: true,
                 changeOrigin: true,
