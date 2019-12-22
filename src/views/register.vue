@@ -13,8 +13,8 @@
 
         </div>
 
-        <div style="padding: 12px;">
-            <SliderVerificationCode height="40px" sliderWidth="100px"  inactiveValue=false activeValue=true content="请滑动通过验证"  v-model="code"/>
+        <div @touchmove.prevent style="padding: 12px;">
+            <SliderVerificationCode height="40px" sliderWidth="90px"  inactiveValue=false activeValue=true content="请滑动通过验证"  v-model="code"/>
         </div>
 
         <div class="button-div">

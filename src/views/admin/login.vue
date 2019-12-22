@@ -9,7 +9,7 @@
       <el-form-item label="密码" prop="password">
         <el-input type="password" placeholder="请输入密码" v-model="form.password"/>
       </el-form-item>
-      <div style="margin: 20px 0px;margin-left: 55px;">
+      <div @touchmove.prevent style="margin: 20px 0px;margin-left: 55px;">
         <SliderVerificationCode height="30px" sliderWidth="45px"  inactiveValue=false activeValue=true content="请滑动通过验证"  v-model="code"/>
       </div>
       <el-form-item>
