@@ -25,7 +25,7 @@
                     </div>
                   
                     <p class="popularMsg-time">{{item.createTime | dateFormat}}</p>
-                    <button class="popularMsg-button-address" v-if="item.showAddress == ''" ><span><img class="popularMsg-click-image" :src="clickPic" alt=""></span>获取具体地址</button>
+                    <button class="popularMsg-button-address" v-if="item.showAddress == '' || item.showAddress == undefined" ><span><img class="popularMsg-click-image" :src="clickPic" alt=""></span>获取具体地址</button>
                     <p class="popularMsg-address" v-else >地点:{{item.showAddress}}</p>
                 </div>
             </div>
@@ -51,7 +51,8 @@ export default {
         List:[],    
         clickPic: require('@/assets/clickPic.png'),
         emptyPic: require('@/assets/emptyPic.png'),
-        token:''
+        token:'',
+        tempData:[]
     }
   },
   created() {
@@ -59,9 +60,12 @@ export default {
       if(this.markList != undefined){
         showSuccess('')
         let data = []
-        this.markList.map((item) => {
-            item.showAddress = ''
-            data.push({...item})
+        let res = [...this.markList]
+        res.map((item) => {
+            if(item != null){
+                item['showAddress']  = ''
+                data.push({...item})
+            }
         })
         this.List = data
       }else{
@@ -69,10 +73,9 @@ export default {
             this.handleGetUserMsg()
         }
       }
-      
   },
   mounted () {
-
+    
   },
   filters:{
       dateFormat:function(value){
