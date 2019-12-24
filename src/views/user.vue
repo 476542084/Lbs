@@ -133,9 +133,15 @@ export default {
         }
     },
     getFile(e){
+        let that = this
         let beforeFile = e.currentTarget.files[0]
         compressImage(beforeFile , 100, 100, 0.95).then(canvasToBlob).then((afterFile) => {
-            this.handleUpdateUserPic(afterFile)
+            if(afterFile.size >= (1024*1024*3)){
+                showError('图片太大了！')
+            }else{
+                this.handleUpdateUserPic(afterFile)
+            }
+
         })  
     },
     async handleGetCheckList(){

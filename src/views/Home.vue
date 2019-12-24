@@ -233,7 +233,7 @@ export default {
               showSuccess('')
               that.showLocationMsg(result)
             }else{
-              showError(result)
+              showError('定位失败，请开启定位权限')
               that.showLocationMsg(result)
             }
           });
@@ -242,9 +242,10 @@ export default {
 
     },
     showLocationMsg(data){
+      var geolocation = new AMap.Geolocation();
       if(data.message == "Geolocation permission denied."){
-         showError('定位失败，请允许')
-        navigator.geolocation.getCurrentPosition(this.showPosition(),this.showError());
+        showError('定位失败，请开启定位权限')
+        geolocation.getCurrentPosition(this.showPosition(),this.showError());
       }
       if(data.info == 'SUCCESS'){
         showSuccess('')

@@ -53,7 +53,7 @@ module.exports = {
                 }
             },
             "/amap": {
-                target: "https://restapi.amap.com/v3/geocode/regeo",
+                target: "http://restapi.amap.com/v3/geocode/regeo",
                 ws:false,
                 secure: true,
                 changeOrigin: true,

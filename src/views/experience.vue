@@ -291,7 +291,7 @@ export default {
                 })
                 this.openTouch()
                 this.responseVisible = false
-                // this.handleGetExperienceDetail(this.tempCommData)
+                this.handleGetExperienceDetail(this.tempCommData)
             }else{
                 showError(res.msg||res.error)
             }
@@ -330,12 +330,21 @@ export default {
         this.$refs.uploadFile.dispatchEvent(new MouseEvent('click')) 
     },
     getFile(e){
+        let that = this
         let beforeFile = e.currentTarget.files[0]
         this.addUploadPic = getObjectURL(beforeFile)
 
-        compressImage(beforeFile , 1600, 1600, 1).then(canvasToBlob).then((afterFile) => {
-            this.addUploadFile = afterFile
+        compressImage(beforeFile , 1200, 1200, 1).then(canvasToBlob).then((afterFile) => {
+            if(afterFile.size >= (1024*1024*3)){
+                showError('图片太大了！')
+                that.addUploadPic = require('@/assets/addUploadPic.png')
+            }else{
+                this.addUploadFile = afterFile
+            }
+            
         })  
+        // return
+        // console.log('')
     },
     //获取心得列表
     async handleGetExperienceHome(){

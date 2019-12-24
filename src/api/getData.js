@@ -2,7 +2,7 @@ import fetch from './fetch'
 import store from '@/store'
 import {baseUrl} from '../../vue.config'
 const url = baseUrl == '/' ? '/api' : baseUrl
-const mapUrl = baseUrl == '/' ? '/amap' : 'https://restapi.amap.com/v3/geocode/regeo'
+const mapUrl = baseUrl == '/' ? '/amap' : 'http://restapi.amap.com/v3/geocode/regeo'
 
 
 //高德地图
