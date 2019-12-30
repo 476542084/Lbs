@@ -33,14 +33,14 @@
                     label="地址"
                     width="250"> 
                     <template slot-scope="scope">
-                        <div v-if="scope.row.showAddress == ''" @click="haneleGetAmapAddress(scope.row.lat,scope.row.lng,scope.$index)" style=" cursor: pointer;">
+                        <!-- <div v-if="scope.row.showAddress == ''" @click="haneleGetAmapAddress(scope.row.lat,scope.row.lng,scope.$index)" style=" cursor: pointer;">
                            <img class="table-overhidden-pic" :src="clickPic" alt=""><span style="font-size:10px;">点击可查看具体地址</span>
                            <div>
                                <p>经度:{{ scope.row.lng }}</p>
                                <p>纬度:{{ scope.row.lat }}</p>
                            </div>
-                        </div>
-                        <div v-else>{{scope.row.showAddress}}</div>
+                        </div> -->
+                        <div>{{scope.row.address == '[]' ? '[地址异常]' : scope.row.address}}</div>
                     </template>
                 </el-table-column>
 
@@ -102,19 +102,19 @@ export default {
         }
     },
 
-    async haneleGetAmapAddress(lat,lng,index){
-        try {
-            let res = await getAmapAddress(lat, lng)
-            if(res.infocode == '10000'){
-                this.tableData[index]['showAddress'] = res.regeocode.formatted_address
-            }else{
-                this.$message.error(res.msg||res.error);
-            }
-        } catch (error) {
-             this.$message.error('网络错误，请稍后重试！');
-        }
+    // async haneleGetAmapAddress(lat,lng,index){
+    //     try {
+    //         let res = await getAmapAddress(lat, lng)
+    //         if(res.infocode == '10000'){
+    //             this.tableData[index]['showAddress'] = res.regeocode.formatted_address
+    //         }else{
+    //             this.$message.error(res.msg||res.error);
+    //         }
+    //     } catch (error) {
+    //          this.$message.error('网络错误，请稍后重试！');
+    //     }
 
-    },
+    // },
 
     async handleDeleteMark(index,markId,type){
         try {

@@ -8,7 +8,7 @@
         </div>
 
         <div v-if="List.length != 0" class="popularMsg-content" :style="{height:(markList != undefined ? 'calc(100vh - 100px)':'calc(100vh - 60px)')}">
-            <div class="popularMsg-item" v-for="(item,index) in List" :key="index" @click="haneleGetAmapAddress(item.lat,item.lng,index,item.showAddress)">
+            <div class="popularMsg-item" v-for="(item,index) in List" :key="index" >
                 <div class="popularMsg-img">
                     <img :src="item.headImage" alt="头像">
                     <div style="display: flex;
@@ -25,8 +25,7 @@
                     </div>
                   
                     <p class="popularMsg-time">{{item.createTime | dateFormat}}</p>
-                    <button class="popularMsg-button-address" v-if="item.showAddress == '' || item.showAddress == undefined" ><span><img class="popularMsg-click-image" :src="clickPic" alt=""></span>获取具体地址</button>
-                    <p class="popularMsg-address" v-else >地点:{{item.showAddress}}</p>
+                    <p class="popularMsg-address" >地点:{{item.address == '[]' ? '[地址异常]' : item.address}}</p>
                 </div>
             </div>
         </div>
@@ -83,22 +82,22 @@ export default {
       }
   },
   methods:{
-    async haneleGetAmapAddress(lat,lng,index,address){
-        if(address != '') return
-        Indicator.open();
-        try {
-            let res = await getAmapAddress(lat, lng)
-            if(res.infocode == '10000'){
-                showSuccess('')
-                this.List[index]['showAddress'] = res.regeocode.formatted_address
-            }else{
-                showError(res.msg||res.error)
-            }
-        } catch (error) {
-             showError('网络错误，请稍后重试！')
-        }
+    // async haneleGetAmapAddress(lat,lng,index,address){
+    //     if(address != '') return
+    //     Indicator.open();
+    //     try {
+    //         let res = await getAmapAddress(lat, lng)
+    //         if(res.infocode == '10000'){
+    //             showSuccess('')
+    //             this.List[index]['showAddress'] = res.regeocode.formatted_address
+    //         }else{
+    //             showError(res.msg||res.error)
+    //         }
+    //     } catch (error) {
+    //          showError('网络错误，请稍后重试！')
+    //     }
 
-    },
+    // },
     async handleGetUserMsg(){
         Indicator.open();
         try {
