@@ -5,7 +5,7 @@ function resolve(dir) {
 module.exports = {
     // 基本路径
     baseUrl: process.env.NODE_ENV === 'production'
-    ? 'http://47.102.134.4:1111'
+    ? 'https://rockp.club'
     : '/',
     publicPath: process.env.NODE_ENV === 'production'
     ? './static'
@@ -38,13 +38,13 @@ module.exports = {
     },
     // 它支持webPack-dev-server的所有选项
     devServer: {
-        host: "192.168.1.5",
+        host: "192.168.3.51",
         port: 8080, // 端口号
-        https: false, // https:{type:Boolean}
+        https: true, // https:{type:Boolean}
         open: false, //配置自动启动浏览器
         proxy: {
             "/api": {
-                target: "http://47.102.134.4:1111",
+                target: "https://rockp.club",
                 ws:false,
                 secure: false,
                 changeOrigin: true,
@@ -53,7 +53,7 @@ module.exports = {
                 }
             },
             "/amap": {
-                target: "http://restapi.amap.com/v3/geocode/regeo",
+                target: "https://restapi.amap.com/v3/geocode/regeo",
                 ws:false,
                 secure: true,
                 changeOrigin: true,

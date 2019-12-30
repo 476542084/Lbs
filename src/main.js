@@ -32,12 +32,12 @@ if (isMobile()) {
 
 // 页面刷新时，重新赋值token
 if (sessionStorage.getItem('token')) {
-  console.log('token',sessionStorage.getItem('token'))
+//   console.log('token',sessionStorage.getItem('token'))
   store.commit('set_token', sessionStorage.getItem('token'))
 }
 
 if (sessionStorage.getItem('userInfo')) {
-  console.log('userInfo',sessionStorage.getItem('userInfo'))
+//   console.log('userInfo',sessionStorage.getItem('userInfo'))
   store.commit('set_userInfo', JSON.parse(sessionStorage.getItem('userInfo')))
 }
 

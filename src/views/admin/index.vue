@@ -81,6 +81,7 @@
 
         </div>
       </div>
+      <a class="ipc" href="http://www.beian.miit.gov.cn/">粤ICP备19160321号-1</a>
     </div>
 </template>
 <script>
@@ -201,5 +202,10 @@ export default {
     width: 100%;
     height: 100%;
     padding: 10px;
+}
+.ipc{
+    text-align: center;
+    display: block;
+    color: unset;
 }
 </style>

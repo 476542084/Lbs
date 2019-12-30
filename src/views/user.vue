@@ -52,7 +52,7 @@
                 
         </mt-popup>
 
-
+        <a class="ipc" href="http://www.beian.miit.gov.cn/">粤ICP备19160321号-1</a>
         <LbsNav propSelected="user"></LbsNav>
     </div>
 </template>
@@ -274,5 +274,15 @@ export default {
     display: -webkit-box;
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
+}
+.ipc{
+        text-align: center;
+    width: 100%;
+    background-color: #d9d9d92e;
+    position: fixed;
+    bottom: 55px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    color: unset;
 }
 </style>

@@ -16,7 +16,7 @@
         <el-button type="primary" @click="onSubmit('loginForm')">登录</el-button>
       </el-form-item>
     </el-form>
-     
+     <a class="ipc" href="http://www.beian.miit.gov.cn/">粤ICP备19160321号-1</a>
   </div>
 </template>
 
@@ -126,4 +126,14 @@ margin-left: 55px !important;
   .el-form-item__label{
      color: #fff !important;
   }
+  .ipc{
+        text-align: center;
+    width: 100%;
+    background-color: #d9d9d92e;
+    position: fixed;
+    bottom: 55px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    color: unset;
+}
 </style>
