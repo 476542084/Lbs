@@ -46,7 +46,7 @@ npm run build
 <img src="http://q91361avh.bkt.clouddn.com/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200419214601.jpg" width="375" heigh="667" />
 <img src="http://q91361avh.bkt.clouddn.com/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200419214608.jpg" width="375" heigh="667" />
 <img src="http://q91361avh.bkt.clouddn.com/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200419214615.jpg" width="375" heigh="667" />
-<img src="http://q91361avh.bkt.clouddn.com/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200419214641.png.jpg" width="375" heigh="667" />
+<img src="http://q91361avh.bkt.clouddn.com/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200419214641.png" width="375" heigh="667" />
 <img src="http://q91361avh.bkt.clouddn.com/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200419214654.png" width="900" heigh="667" />
 <img src="http://q91361avh.bkt.clouddn.com/%E7%99%BB%E5%BD%95%E9%A1%B5%E9%9D%A2.jpg" width="375" heigh="667" />
 
