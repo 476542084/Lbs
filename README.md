@@ -24,7 +24,7 @@ npm run build
 
 ### 相关技术栈：
 
-+ vue + vuex + vue-router + vant + element
++ vue + vuex + vue-router + vant + element + echart
 + token控制
 + 后台单点登录机制
 + ....
