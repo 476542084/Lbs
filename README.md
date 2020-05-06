@@ -9,7 +9,8 @@ git clone git@github.com:476542084/Lbs.git
 ```
 ### 启动
 
->启动暂时请求原有java后台（暂时在别的同学那里，之后我会重写一个koa.js版本后台，敬请期待...），贴上<a src="https://github.com/476542084/Lbs/blob/master/package.json" >API说明</a>
+>启动暂时请求原有java后台（暂时在别的同学那里，之后我会重写一个koa.js版本后台，敬请期待...）
+贴上<a href="https://github.com/476542084/Lbs/blob/master/package.json" >API说明</a>
 
 ## Install
 ```
